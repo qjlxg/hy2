@@ -322,8 +322,6 @@ trojan://b69c24fe-b9be-4dcd-a833-3f6b211eea7c@152.228.242.161:443?security=tls&a
 trojan://b7a4cec5-1f03-4a01-9c25-abee5b801d14@multiport.artunnel57.host:443?security=tls&type=ws&headerType=none&path=/trojan-tls&sni=YourBugHost&host=multiport.artunnel57.host#TLS_Trojan_WS
 trojan://b7a4cec5-1f03-4a01-9c25-abee5b801d14@multiport.artunnel57.host:80?security=none&type=ws&headerType=none&path=/trojan-ntls&host=multiport.artunnel57.host#NTLS_Trojan_WS
 trojan://b8841c50-c3ad-11ee-9be0-1239d0255272@de1.test3.net:443/chatbuzzteambhm.chatbuzzt7150.workers.dev?sni=chatbuzzteambhm.chatbuzzt7150.workers.dev#@chatbuzz_serverbot
-trojan://b9edaab0-e484-342b-ab7c-09bd4f9dd98f@gy.58n.net:20301?allowInsecure=1&sni=z301.hongkongnode.top#@Hope_Net-join-us-on-Telegram
-trojan://b9edaab0-e484-342b-ab7c-09bd4f9dd98f@gy.58n.net:28678?allowInsecure=1&sni=z143.hongkongnode.top#@Hope_Net-join-us-on-Telegram
 trojan://ba74833c-8c0f-4dcd-8cbc-13e3c32d3765@185.236.233.111:2053?sni=ftp.debian.org#🇷🇺_RU_俄罗斯联邦_3
 trojan://bpb-trojan@104.17.147.22:2053/?type=ws&host=bpb-worker-panel1-e4p.pages.dev&path=/trn6lSYIYbgvYGra0u/ZGUucmFkaWNhbGx5LnBybw==&security=tls&sni=bPB-worker-PANeL1-e4p.paGes.DeV&alpn=http/1.1#🏴‍☠️-t.me/NetFreedom0
 trojan://bpb-trojan@104.17.147.22:2053?path=/trn6lSYIYbgvYGra0u/ZGUucmFkaWNhbGx5LnBybw==&security=tls&alpn=http/1.1&host=bpb-worker-panel1-e4p.pages.dev&type=ws&sni=bPB-worker-PANeL1-e4p.paGes.DeV#@bimnetvpn
@@ -333,6 +331,7 @@ trojan://bpb-trojan@104.17.147.22:2053?path=/trn6lSYIYbgvYGra0u/ZGUucmFkaWNhbGx5
 trojan://bpb-trojan@104.17.147.22:2053?path=/trn6lSYIYbgvYGra0u/ZGUucmFkaWNhbGx5LnBybw==&security=tls&host=bpb-worker-panel1-e4p.pages.dev&type=ws&sni=bPB-worker-PANeL1-e4p.paGes.DeV#🇺🇸@proxy_v2boxبرای+کانفینگ+های+بیشتر+عضو+شو+👈🏽
 trojan://bpb-trojan@104.17.147.22:2053?security=tls&sni=bPB-worker-PANeL1-e4p.paGes.DeV&alpn=http/1.1&type=ws&host=bpb-worker-panel1-e4p.pages.dev&path=/trn6lSYIYbgvYGra0u/ZGUucmFkaWNhbGx5LnBybw==#@parsconfigg++👈کانفیگ+رایگان+میخوای+بیا+اینجا
 trojan://bpb-trojan@104.17.147.22:2053?security=tls&sni=bPB-worker-PANeL1-e4p.paGes.DeV&type=ws&host=bpb-worker-panel1-e4p.pages.dev&path=/trn6lSYIYbgvYGra0u/ZGUucmFkaWNhbGx5LnBybw==#TG:@v2ray_sub
+trojan://bpb-trojan@104.17.207.36:443?path=/trDQA9oP0yBecBROvh?ed=2560&security=tls&alpn=h2,http/1.1&host=daily-configs.pages.dev&fp=chrome&type=ws&sni=dAIly-coNfigs.pAGes.dEV#[🏁]t.me/ConfigsHub
 trojan://bpb-trojan@104.18.34.21:2053/?type=ws&host=bpb-worker-panel1-e4p.pages.dev&path=/trEjWhhuRjwiMwSbDN/ZGUucmFkaWNhbGx5LnBybw==&security=tls&sni=bpB-worKER-paneL1-e4p.pAGes.dEV&alpn=http/1.1&fp=chrome#-t.me/NetFreedom0
 trojan://bpb-trojan@104.18.34.21:2053?path=/trEjWhhuRjwiMwSbDN/ZGUucmFkaWNhbGx5LnBybw==&security=tls&alpn=http/1.1&host=bpb-worker-panel1-e4p.pages.dev&fp=chrome&type=ws&sni=bpB-worKER-paneL1-e4p.pAGes.dEV#@APPSOONE
 trojan://bpb-trojan@104.18.34.21:2053?path=/trEjWhhuRjwiMwSbDN/ZGUucmFkaWNhbGx5LnBybw==&security=tls&alpn=http/1.1&host=bpb-worker-panel1-e4p.pages.dev&fp=chrome&type=ws&sni=bpB-worKER-paneL1-e4p.pAGes.dEV#@APPSOONER+کانال+تلگرام+🇩🇪
