@@ -20,13 +20,10 @@ hysteria2://2df2c442-2161-42e5-9d77-0fe3a3fea053@us.bailian.site:20441?security=
 hysteria2://2df2c442-2161-42e5-9d77-0fe3a3fea053@us.bailian.site:20453?security=tls&insecure=1&sni=us.bailian.site#美国1
 hysteria2://2df2c442-2161-42e5-9d77-0fe3a3fea053@us.bailian.site:20488?security=tls&insecure=1&sni=us.bailian.site#美国4
 hysteria2://3abf62e72dfe55333b6dd59112f4ae71@speedtest.mci.ai:443?security=tls&insecure=0&sni=speedtest.mci.ai#NTGreen+👽
-hysteria2://51ed158e-b95b-451b-a48b-60e356de287d@35afq4514.surfcat.store:30001?security=tls&insecure=1&sni=35afq4514.surfcat.store#@meli_proxyy
 hysteria2://51ed158e-b95b-451b-a48b-60e356de287d@35afq4514.surfcat.store:30001?security=tls&insecure=1&sni=35afq4514.surfcat.store#MCI-@V2ray_Alpha-7
 hysteria2://51ed158e-b95b-451b-a48b-60e356de287d@35afq4514.surfcat.store:30001?security=tls&insecure=1&sni=35afq4514.surfcat.store#MCI-@V2ray_Raha-7
-hysteria2://51ed158e-b95b-451b-a48b-60e356de287d@35asfq3t.surfcat.store:30103?security=tls&insecure=1&sni=35afq4514.surfcat.store#@meli_proxyy
 hysteria2://51ed158e-b95b-451b-a48b-60e356de287d@35asfq3t.surfcat.store:30103?security=tls&insecure=1&sni=35afq4514.surfcat.store#MCI-@V2ray_Alpha-8
 hysteria2://51ed158e-b95b-451b-a48b-60e356de287d@35asfq3t.surfcat.store:30103?security=tls&insecure=1&sni=35afq4514.surfcat.store#MCI-@V2ray_Raha-8
-hysteria2://51ed158e-b95b-451b-a48b-60e356de287d@35f235a.surfcat.store:30103?security=tls&insecure=1&sni=35afq4514.surfcat.store#@meli_proxyy
 hysteria2://51ed158e-b95b-451b-a48b-60e356de287d@35f235a.surfcat.store:30103?security=tls&insecure=1&sni=35afq4514.surfcat.store#MCI-@V2ray_Alpha-5
 hysteria2://51ed158e-b95b-451b-a48b-60e356de287d@35f235a.surfcat.store:30103?security=tls&insecure=1&sni=35afq4514.surfcat.store#MCI-@V2ray_Raha-5
 hysteria2://6d853bb9@[2a0e:dc0:5:2264:a:b:220e:a5c9]:61631?security=tls&insecure=1&sni=2a0e:dc0:5:2264:a:b:220e:a5c9#IR-@V2ray_Alpha-01
@@ -44,7 +41,6 @@ hysteria2://9SbSesP9Q3@ir.ir.ir.speedtest.net.iririr.monster:28188?sni=ir.ir.ir.
 hysteria2://KevinZakarian@kevin.serverv.net:8443?&insecure=1&obfs=salamander&obfs-password=KevinZakarian#KevinVPN
 hysteria2://c72ee44c@[2001:41d0:a:2a7a:a:b:df4e:2408]:35051?security=tls&insecure=1&sni=2001:41d0:a:2a7a:a:b:df4e:2408#MCI-@V2ray_Alpha-01
 hysteria2://c72ee44c@[2001:41d0:a:2a7a:a:b:df4e:2408]:35051?security=tls&insecure=1&sni=2001:41d0:a:2a7a:a:b:df4e:2408#MCI-@V2ray_Raha-02
-hysteria2://d45e4297-0e1c-4e61-86e3-a2d18d3c2a0e@us.legeth.cc:26873?security=tls&insecure=0&sni=us.legeth.cc#@meli_proxyy
 hysteria2://d45e4297-0e1c-4e61-86e3-a2d18d3c2a0e@us.legeth.cc:26873?security=tls&insecure=0&sni=us.legeth.cc#MCI-@V2ray_Alpha-6
 hysteria2://d45e4297-0e1c-4e61-86e3-a2d18d3c2a0e@us.legeth.cc:26873?security=tls&insecure=0&sni=us.legeth.cc#MCI-@V2ray_Raha-6
 hysteria2://de08f485-8f8c-4316-9e80-6e7ecdf91d45@14in.prometheusnet01.xyz:24149?insecure=1&obfs=none&mport=21000-26000&fastopen=1#🇮🇳14印度-移动/南方联通(hy2)
