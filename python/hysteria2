@@ -1,7 +1,6 @@
 hysteria2://0d42717f@212.192.13.222:1995?security=tls&insecure=1&sni=www.bing.com#MCi-@V2ray_Alpha-8
 hysteria2://1051bfbb-90db-4261-b5e4-8b91f62b437f@con.bitplatform-servers.com:48173?hiddify=1&obfs=salamander&obfs-password=zeryYYEPSzWiCPYstfUb&sni=con.bitplatform-servers.com#con.bitplatform-servers.com Hysteria2
 hysteria2://1af84dc4749dbc10031389e03a96ba96@quran.mci.ai:443?security=tls&insecure=0#🇹🇷+Türkiye+NTGreen
-hysteria2://1af84dc4749dbc10031389e03a96ba96@speedtest.mci.ai:443?security=tls&insecure=0#🇳🇱+Netherland+(Hysteria)+⚡+NTGreen+👽
 hysteria2://1f17cdf0578a2860@[2001:19f0:5:34a0:5400:5ff:fe19:3f6f]:443?security=tls&obfs=salamander&obfs-password=4b817757&insecure=1#MCI-@V2ray_Alpha-10
 hysteria2://1f17cdf0578a2860@[2001:19f0:5:34a0:5400:5ff:fe19:3f6f]:443?security=tls&obfs=salamander&obfs-password=4b817757&insecure=1#MCI-@V2ray_Raha-10
 hysteria2://28c05d48e2f470d07a4c392c9bd43849@quran.mci.ai:443?security=tls&insecure=0#🇹🇷+Türkiye+(Hysteria)+⚡
@@ -17,7 +16,6 @@ hysteria2://2d347be7-909b-4410-af92-95a1abf7e531@193.123.76.84:35000?security=tl
 hysteria2://2d347be7-909b-4410-af92-95a1abf7e531@193.123.76.84:35000?security=tls&insecure=1&sni=www.apple.com#All-@V2ray_Alpha-2
 hysteria2://2d347be7-909b-4410-af92-95a1abf7e531@193.123.76.84:35000?security=tls&insecure=1&sni=www.apple.com#All-@V2ray_Raha-2
 hysteria2://2d95c913-ca42-4f11-b4ab-391b922d0099@hk.tuanzi.site:20701?security=tls&insecure=1#Channel id: 𝐣𝐨𝐢𝐧𓄂𓆃 @v2rayngrit🇭🇰
-hysteria2://3abf62e72dfe55333b6dd59112f4ae71@speedtest.mci.ai:443?security=tls&insecure=0&sni=speedtest.mci.ai#NTGreen+👽
 hysteria2://4453aa95-c236-46a1-8066-8145ab8ebee6@207.211.176.63:30102?security=tls&insecure=1&sni=us13.wish.ml#MCI-@V2ray_Alpha-2
 hysteria2://4453aa95-c236-46a1-8066-8145ab8ebee6@207.211.176.63:30102?security=tls&insecure=1&sni=us13.wish.ml#MCI-@V2ray_Raha-2
 hysteria2://4453aa95-c236-46a1-8066-8145ab8ebee6@207.211.189.252:30102?security=tls&insecure=1&sni=us12.wish.ml#IR-@V2ray_Alpha-5
@@ -79,6 +77,7 @@ hysteria2://KevinZakarian@kevin.serverv.net:8443?obfs=salamander&obfs-password=K
 hysteria2://a51c8701-ae69-4976-9b23-cafb8d12ef60@45.140.169.231:8080?security=tls&insecure=1&sni=www.bing.com#IR-@V2ray_Alpha-05
 hysteria2://bc97f674-c578-4940-9234-0a1da46041b9@188.68.234.53:24662?security=tls&insecure=1&sni=www.bing.com#IR-@V2ray_Alpha-3
 hysteria2://bc97f674-c578-4940-9234-0a1da46041b9@188.68.234.53:24662?security=tls&insecure=1&sni=www.bing.com#IR-@V2ray_Raha-3
+hysteria2://bc97f674-c578-4940-9234-0a1da46041b9@188.68.234.53:24662?security=tls&insecure=1&sni=www.bing.com#سرور رایگان پرسرعت🌊 @vmess_ir
 hysteria2://de08f485-8f8c-4316-9e80-6e7ecdf91d45@14in.prometheusnet01.xyz:24149?insecure=1&obfs=none&mport=21000-26000&fastopen=1#🇮🇳14印度-移动/南方联通(hy2)
 hysteria2://de08f485-8f8c-4316-9e80-6e7ecdf91d45@24sg.prometheusnet01.xyz:23729?insecure=1&obfs=none&mport=21000-26000&fastopen=1#🇸🇬24新加坡-联通/移动(hy2)
 hysteria2://f0c28384-b2bd-4911-be81-0f2a3131b9ea@146.56.116.145:55228?security=tls&insecure=1&sni=bing.com#@v2rayland02🌐
