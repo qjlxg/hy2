@@ -1,6 +1,8 @@
 trojan://03793bc4-e0e9-4527-b0ff-8fe1ce7aaf3d@172.67.171.49:443?path=/&security=tls&host=us1.trojanvpn.xyz&type=ws&sni=us1.trojanvpn.xyz#@hopev2ray💜
 trojan://05003b7a-8f03-41d5-b696-0119e8376a20@217.182.76.235:443?security=tls&sni=t6.teslacdn2.live&type=tcp&headerType=none&host=t6.teslacdn2.live#BESHKAN
 trojan://0ab6c98dae3b48e8b9c4a776b6c9c19a@104.16.192.1:443?path=/6b777a91&security=tls&host=sherasheba.com&type=ws&sni=sherasheba.com#TG:+@VPNHouse_Official+🇺🇸
+trojan://0ab6c98dae3b48e8b9c4a776b6c9c19a@104.16.192.1:443?security=tls&headerType=&type=tcp&sni=sherasheba.com#🇺🇸|US|美国|@wxgqlfx|55
+trojan://0ab6c98dae3b48e8b9c4a776b6c9c19a@104.17.147.11:443?security=tls&headerType=&type=tcp&sni=jobscareerfortoday.com#🇺🇸|US|美国|@wxgqlfx|54
 trojan://0b1371aa-649d-41dc-9126-338c87936500@95.164.33.62:443?allowInsecure=1&sni=sourceforge.net&ws=1&wspath=/websocket#瑞典-143.7KB/s
 trojan://0e81a9cd-d849-4101-8d64-574c283207de@172.67.204.84:2083?path=/websocket&security=tls&host=de1.trojanvpn.de&type=ws&sni=de1.trojanvpn.de#@NPV_V2RAY
 trojan://11ae0edd-2f63-4495-8683-037abbda9986@amin.karkas1.ir:443?path=/6vuNVgOFnqUEvj0sNkGkxxW7&security=tls&alpn=h2&host=amin.karkas1.ir&fp=chrome&type=ws&sni=amin.karkas1.ir#Cdn_tls_h2_WS_direct_trojan
@@ -23,12 +25,14 @@ trojan://299025b9-6b55-430c-be38-9a18c06873ac@cn1.one.edu.kg:12003?allowInsecure
 trojan://299025b9-6b55-430c-be38-9a18c06873ac@cn1.one.edu.kg:12005?allowInsecure=1&sni=cn1.one.edu.kg#中转节点-2.06MB/s
 trojan://2UjlIHU3W7@www.speedtest.net:80?type=ws&path=/&host=s9.in01.tech&security=none#1n3jgljw
 trojan://2dbd2a10-9512-4b60-84e6-5d9926a9fe5b@104.18.202.232:2083?mode=gun&security=tls&alpn=h2&authority=&fp=chrome&type=grpc&serviceName=OVmkPBATL0FOwZU9iYzyeZwbq&sni=laenatbar.seyedalikhameneibinamous.site#@Hot_V2Ry
+trojan://2e3562a819634de686ade78e434c0963@104.17.147.5:443?security=tls&headerType=&type=tcp&sni=jobscareertoday.com#🇺🇸|US|美国|@wxgqlfx|52
 trojan://2e3562a819634de686ade78e434c0963@104.17.147.5:443?security=tls&sni=jobscareertoday.com&type=ws&path=6b777a91&host=jobscareertoday.com#04-t.me/NetFreedom0
 trojan://2ea5fc44-bd38-4fb0-a9b9-88c83fc56622@194.146.26.40:443?security=tls&sni=4-193-105-141.nhost.00cdn.com&type=tcp&headerType=none&host=4-193-105-141.nhost.00cdn.com#BESHKAN
 trojan://2ea5fc44-bd38-4fb0-a9b9-88c83fc56622@89.163.224.122:443?security=tls&sni=4-193-105-141.nhost.00cdn.com&type=tcp&headerType=none&host=4-193-105-141.nhost.00cdn.com#BESHKAN
 trojan://2f211aae-3678-47a6-b231-46304443772f@188.114.97.82:443?path=/trojanws?ed=2048&security=tls&alpn=http/1.1&host=cdir-0203.wlfvip.com&type=ws&sni=cdir-0203.wlfvip.com#@webonim+کانال+تلگرام
 trojan://3648425794742788096@35.168.124.79:443?type=tcp&security=tls&sni=humble-rodent.treefrog761.one&allowInsecure=1#🇺🇸_定制专线：@Alin006Bot
 trojan://3648425794742788096@35.168.124.79:443?type=tcp&security=tls&sni=humble-rodent.treefrog761.one&allowInsecure=1#🇺🇸_定制专线：@QS00008
+trojan://3648425794742788096@5.8.35.140:443?security=tls&headerType=&type=tcp&sni=prime-gator.treefrog761.one#🇳🇱|NL|荷兰|@wxgqlfx|98
 trojan://3648425794742788096@54.251.144.236:443?security=tls&headerType=none&type=tcp&sni=enabling-heron.treefrog761.one#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
 trojan://3648425794742788096@enabling-heron.treefrog761.one:443?security=tls&headerType=none&type=tcp&sni=enabling-heron.treefrog761.one#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
 trojan://3648425794742788096@polished-ox.treefrog761.one:443?security=tls&headerType=none&type=tcp&sni=polished-ox.treefrog761.one#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
@@ -79,6 +83,8 @@ trojan://78f9bf50-bce8-11ee-8913-1239d0255272@de1.test3.net:443/chatbuzzteambhm.
 trojan://79c935c0-27dc-4383-b307-dcac1b8e5509@104.149.155.13:443?security=tls&sni=vzwzasc.cn&type=tcp&headerType=none&host=vzwzasc.cn#🇺🇸US-104.149.155.13-2705
 trojan://7c58bf11-9175-46d1-accf-e1883bf0d5f8@svip.88de.hongxingdl.vip:28721?security=tls&sni=mmbiz1.redapricotcloud.com&type=tcp&headerType=none#不定期抽奖https://t.me/mftizi
 trojan://7cb0d977-799e-4768-9ec6-ccd179a92715@cloud.sobhan.fun:443?path=/W7RfbbiLXkwOEvspY8C&security=tls&alpn=http/1.1&fp=chrome&type=ws&sni=cloud.sobhan.fun#@VPNTAKO+&⏳1.5TB
+trojan://8ac9d280-afe3-4389-bc00-25128983a689@zula.ir:443?path=/?ed=2560&security=tls&alpn=h3&host=ttbirdxray.collagenetwork.us.kg&fp=chrome&type=ws&sni=ttbirdxray.collagenetwork.us.kg
+trojan://8ac9d280-afe3-4389-bc00-25128983a689@zula.ir:443?path=/?ed=2560&security=tls&alpn=h3&host=ttbirdxray.collagenetwork.us.kg&fp=chrome&type=ws&sni=ttbirdxray.collagenetwork.us.kg#سرور رایگان پرسرعت🌊 @vmess_ir
 trojan://904dd222-2514-4a68-9185-32f89113afd9@jp01.freeflyingcloud.xyz:44402?allowInsecure=1&sni=jp01.freeflyingcloud.xyz#日本-524.0KB/s
 trojan://904dd222-2514-4a68-9185-32f89113afd9@kr01.freeflyingcloud.xyz:24852?allowInsecure=1#韩国-11.45MB/s
 trojan://904dd222-2514-4a68-9185-32f89113afd9@kr01.freeflyingcloud.xyz:24852?allowInsecure=1&sni=kr01.freeflyingcloud.xyz#韩国-16.06MB/s
@@ -124,6 +130,7 @@ trojan://PU3f7528NtNXnQqb9X263rGSD@get.fragmentary.info:443?security=tls&sni=get
 trojan://Q0Jqz6dchw@tunnel.vpns.fun:2053?security=tls&sni=vilnius.vpns.fun&allowInsecure=1&type=ws&path=/cdnmui&host=vilnius.vpns.fun#🎄 @VilniusVPN - 🇳🇱
 trojan://QPfTL8FaiPMknCSSW85VuQ@konkurifree.sanjesh.online:6176?security=none=/@TEHRANARGO-|-@TEHRANARGO-|-@TEHRANARGO-|-@TEHRANARGO-|-@TEHRANARGO-|-@TEHRANARGO-|-@TEHRANARGO-|-@TEHRANARGO-|-@TEHRANARGO-|-@TEHRANARGO-|-@TEHRANARGO&type=tcp&headerType=&path=&host=#🇫🇮Finland 3 (@TEHRANARGO)
 trojan://QwwHvrnN@223.113.54.145:36442?security=tls&headerType=&type=tcp#🇨🇳|CN|中国|@wxgqlfx|53
+trojan://QwwHvrnN@223.113.54.145:36442?security=tls&headerType=&type=tcp#🇨🇳|CN|中国|@wxgqlfx|74
 trojan://QwwHvrnN@223.113.54.145:36442?security=tls&headerType=none&type=tcp#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
 trojan://TJCfE7Mx2YcA8kX8zg@nl1.chuqiangtou.net:4003?security=tls&headerType=none&type=tcp#@v2freenet+E51
 trojan://UipJV58NIw@104.16.11.112:443?security=tls&sni=t2.rtx.al&type=ws&path=/cfisthebest&host=t2.rtx.al#SGP 03 FREE
@@ -189,6 +196,8 @@ trojan://blue2024@104.17.147.167:443?path=/?ed&security=tls&host=ha.lii2010.us.k
 trojan://blue2024@104.18.127.92:443?path=/?ed&security=tls&host=ha.lii2010.us.kg&type=ws&sni=ha.lii2010.us.kg#@V_2rayng0+قط+شدی+بیا+اینجا
 trojan://blue2024@104.18.183.150:443?path=/?ed=2560&security=tls&host=ta.promote.icu&type=ws&sni=ta.promote.icu#WiFi-@V2ray_Alpha-15
 trojan://blue2024@104.19.168.73:443?path=/?ed&security=tls&host=ha.lii2010.us.kg&type=ws&sni=ha.lii2010.us.kg#@V_2rayng0+قط+شدی+بیا+اینجا
+trojan://blue2024@154.206.12.164:443?security=tls&headerType=&type=tcp&sni=b.promote.icu#🇨🇳|CN|中国|@wxgqlfx|92
+trojan://blue2024@160.153.0.167:443?security=tls&headerType=&type=tcp&sni=b.promote.icu#🇳🇱|NL|荷兰|@wxgqlfx|95
 trojan://blue2024@198.41.221.124:443?path=/?ed=2560&security=tls&host=td.promote.icu&type=ws&sni=td.promote.icu#WiFi-@V2ray_Alpha-11
 trojan://blue2024@ha.lii2010.us.kg:443?path=/?ed&security=tls&fp=chrome&type=ws&sni=ha.lii2010.us.kg#@v2raying
 trojan://bpb-trojan@10-bpb-worker-panel.pages.dev:443?path=/trm7P3VNsWWOwIafAP?ed=2560&security=tls&alpn=h2,http/1.1&host=10-bpb-worker-panel.pages.dev&fp=chrome&type=ws&sni=10-bPb-WORKer-paNEL.paGeS.dEV#FreeVPNHomes+10-1
@@ -222,6 +231,7 @@ trojan://bpb-trojan@www.vpslook.com:443?path=/tr?ed=2560&security=tls&alpn=h3&ho
 trojan://bpb-trojan@zula.ir:443?path=/trxcjEhlEAQoH0H4xK?ed=2560&security=tls&alpn=h2,http/1.1&host=10-bpb-worker-panel.pages.dev&fp=chrome&type=ws&sni=10-bPB-worKER-PAnEl.PagES.Dev#FreeVPNHomes+10-7
 trojan://c4da094b-3487-4607-b703-bc380ea3f461@aafrtpfxr.twl01i9zjfegelp.5xfsur8v62.gosdk.xyz:27201?security=tls&sni=q08m.vgraxiw73s.hasyaf.cn&type=tcp&headerType=none#不定期抽奖https://t.me/mftizi
 trojan://c7f9b8f0-bfdb-11ee-a15c-1239d0255272@chatbuzzteambhm.chatbuzzt7150.workers.dev:443?security=tls&type=ws&headerType=none&path=/howdy&sni=de1.test3.net&host=de1.test3.net#@chatbuzzteam
+trojan://cb1f26aa437d4bfa9b841d28503ce8cc@198.41.220.5:443?security=tls&headerType=&type=tcp&sni=jobscareertoday.com#🇺🇸|US|美国|@wxgqlfx|51
 trojan://cba32ac1-abbb-4371-ba50-19eb5c38748c@135.181.253.237:443?security=tls&headerType=none&type=tcp&sni=xvqn.de#🇸🇬+@khass_storyy+جوین+شو
 trojan://cd27884b-c5af-34ec-b75f-8248077818fe@1.mg.us.cat77.cloud:1434?security=tls&sni=1.mg.us.cat77.cloud&type=tcp&headerType=none&host=1.mg.us.cat77.cloud#BESHKAN
 trojan://cd27884b-c5af-34ec-b75f-8248077818fe@1.mg.us.cat77.cloud:1434?security=tls&type=tcp&headerType=none#BESHKAN
@@ -242,6 +252,7 @@ trojan://dH5phyuPXH@95.181.226.162:443?security=none&seed=R3O8BlrnSx&headerType=
 trojan://dQDQCtns4R@162.159.138.232:443?security=tls&sni=fadaei.movieland.top&type=ws&path=static34528&host=fadaei.movieland.top#Suren TM
 trojan://dTjHHw2kDE@23.94.122.66:38505?security=tls&headerType=none&type=tcp#🔰CH+:+@cisco_plus🇺🇲
 trojan://db19fc68-c027-4641-a8eb-eed3e1065c8a@amin.karkas1.ir:443?mode=gun&security=tls&alpn=http/1.1&fp=chrome&type=grpc&serviceName=6vuNVgOFnqUEvj0rcXIcStL&sni=amin.karkas1.ir#amin.karkas1.ir_tls_grpc_direct_trojan
+trojan://dba20dcb635e430fa4d3bfc303a149d2@104.19.171.4:443?security=tls&headerType=&type=tcp&sni=jobscareertoday.com#🇺🇸|US|美国|@wxgqlfx|53
 trojan://dba20dcb635e430fa4d3bfc303a149d2@23.150.248.107:443#🇺🇸 @outlinev
 trojan://dns68@162.159.153.2:443?path=/?ed=2560&security=tls&alpn=http/1.1&host=trojan.putata.us.kg&fp=chrome&type=ws&sni=trojan.putata.us.kg#trand_farsi
 trojan://e0d44ae7-cb7d-4acc-a8c0-9861a6f5eaad@51.91.11.29:80?security=tls&sni=$fr1.trojanvh.xyz&type=tcp&headerType=none&host=$fr1.trojanvh.xyz#🇫🇷FR-51.91.11.29-0970
@@ -319,9 +330,11 @@ trojan://telegram-id-directvpn@18.134.104.70:22222?security=tls&alpn=http/1.1&he
 trojan://telegram-id-directvpn@18.170.178.186:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#🆔@SATARVPN_bot+🇬🇧+GB+80ms
 trojan://telegram-id-directvpn@18.198.183.40:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#Our Channel : @DirectVPN
 trojan://telegram-id-directvpn@18.198.183.40:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚡Telegram = @SOSkeyNET
+trojan://telegram-id-directvpn@18.198.183.40:22222?security=tls&headerType=&type=tcp&sni=trojan.burgerip.co.ukhttp/1.1#🇩🇪|DE|德国|@wxgqlfx|101
 trojan://telegram-id-directvpn@18.203.41.165:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trj.rollingnext.co.uk#Our
 trojan://telegram-id-directvpn@18.217.125.198:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#Our Channel : @DirectVPN
 trojan://telegram-id-directvpn@18.217.125.198:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚡Telegram = @SOSkeyNET
+trojan://telegram-id-directvpn@18.217.125.198:22222?security=tls&headerType=&type=tcp&sni=trojan.burgerip.co.ukhttp/1.1#🇺🇸|US|美国|@wxgqlfx|96
 trojan://telegram-id-directvpn@3.129.71.30:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trj.rollingnext.co.uk#DT9(@Outline_Vpn)
 trojan://telegram-id-directvpn@3.131.174.12:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#Our Channel : @DirectVPN
 trojan://telegram-id-directvpn@3.131.174.12:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚡Telegram = @SOSkeyNET
@@ -445,8 +458,12 @@ trojan://telegram-id-privatevpns@63.35.170.146:22222?security=tls&alpn=http/1.1&
 trojan://telegram-id-privatevpns@63.35.170.146:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚡Telegram = @SOSkeyNET
 trojan://telegram-id-privatevpns@99.81.211.149:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#TG:+@VPNHouse_Official+🇮🇪
 trojan://tg-fq521free@194.76.18.129:443?path=/&security=tls&host=torjan.xn--xhq44j.eu.org&type=ws&sni=torjan.xn--xhq44j.eu.org#🇷🇺|RU|俄罗斯|@wxgqlfx|42
+trojan://tg-fq521free@194.76.18.129:443?path=/&security=tls&host=torjan.xn--xhq44j.eu.org&type=ws&sni=torjan.xn--xhq44j.eu.org#🇷🇺|RU|俄罗斯|@wxgqlfx|9
+trojan://tg-fq521free@198.62.62.67:443?path=/&security=tls&host=torjan.xn--xhq44j.eu.org&type=ws&sni=torjan.xn--xhq44j.eu.org#🇺🇸|US|美国|@wxgqlfx|21
 trojan://tg-fq521free@198.62.62.67:443?path=/&security=tls&host=torjan.xn--xhq44j.eu.org&type=ws&sni=torjan.xn--xhq44j.eu.org#🇺🇸|US|美国|@wxgqlfx|45
 trojan://tg-fq521free@216.24.57.30:443?path=/&security=tls&host=torjan.xn--xhq44j.eu.org&type=ws&sni=torjan.xn--xhq44j.eu.org#🇺🇸|US|美国|@wxgqlfx|44
+trojan://tg-fq521free@216.24.57.30:443?path=/&security=tls&host=torjan.xn--xhq44j.eu.org&type=ws&sni=torjan.xn--xhq44j.eu.org#🇺🇸|US|美国|@wxgqlfx|67
+trojan://tg-fq521free@45.67.215.95:443?path=/&security=tls&host=torjan.xn--xhq44j.eu.org&type=ws&sni=torjan.xn--xhq44j.eu.org#🇺🇦|UA|乌克兰|@wxgqlfx|12
 trojan://tg-fq521free@45.67.215.95:443?path=/&security=tls&host=torjan.xn--xhq44j.eu.org&type=ws&sni=torjan.xn--xhq44j.eu.org#🇺🇦|UA|乌克兰|@wxgqlfx|43
 trojan://turboo-server@azaryol.eu:443?type=tcp&security=none#Turboo_server🇫🇷
 trojan://user@s1.mynameismahsa.info:2053?type=ws&security=tls&path=/&sni=s1.mynameismahsa.info#FI-S1-Sweden-Trojan
