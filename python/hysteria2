@@ -1,4 +1,3 @@
-hysteria2://123456@192.3.85.237:443?security=tls&insecure=1&sni=bing.com#@meli_proxyy
 hysteria2://123456@192.3.85.237:443?security=tls&insecure=1&sni=bing.com#IR-@V2ray_Alpha-4
 hysteria2://123456@192.3.85.237:443?security=tls&insecure=1&sni=bing.com#IR-@V2ray_Raha-4
 hysteria2://28c05d48e2f470d07a4c392c9bd43849@quran.mci.ai:443?security=tls&insecure=0#🇹🇷+Türkiye+(Hysteria)+⚡
@@ -11,7 +10,6 @@ hysteria2://67e1eb33-4ad4-4301-b066-38c4175ca5e6@hk.vvcloud.us.kg:443?security=t
 hysteria2://782efefcaac2a7f26e2be42f7bc5d75a@quran.mci.ai:443?security=tls&insecure=1&sni=quran.mci.ai#🇹🇷+Türkiye+⚡
 hysteria2://8a3b7d4b-39c4-4bb3-8775-56bd65b771da@br.1010520.xyz:1001?security=tls&insecure=0&sni=br.1010520.xyz#MCI-@V2ray_Alpha-5
 hysteria2://8a3b7d4b-39c4-4bb3-8775-56bd65b771da@br.1010520.xyz:1001?security=tls&insecure=0&sni=br.1010520.xyz#MCI-@V2ray_Raha-5
-hysteria2://8a3b7d4b-39c4-4bb3-8775-56bd65b771da@br.1010520.xyz:1001?security=tls&insecure=0&sni=br.1010520.xyz#سرور رایگان پرسرعت🌊 @vmess_ir
 hysteria2://8a3b7d4b-39c4-4bb3-8775-56bd65b771da@br.1010520.xyz:1002?security=tls&insecure=0&sni=br.1010520.xyz#MCI-@V2ray_Alpha-4
 hysteria2://8a3b7d4b-39c4-4bb3-8775-56bd65b771da@br.1010520.xyz:1002?security=tls&insecure=0&sni=br.1010520.xyz#MCI-@V2ray_Raha-4
 hysteria2://8a3b7d4b-39c4-4bb3-8775-56bd65b771da@th.1010520.xyz:1001?security=tls&insecure=0&sni=th.1010520.xyz#MCI-@V2ray_Alpha-6
@@ -20,50 +18,35 @@ hysteria2://8a3b7d4b-39c4-4bb3-8775-56bd65b771da@th.1010520.xyz:1002?security=tl
 hysteria2://8a3b7d4b-39c4-4bb3-8775-56bd65b771da@th.1010520.xyz:1002?security=tls&insecure=0&sni=th.1010520.xyz#MCI-@V2ray_Raha-7
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@bl1.mangshe.xyz:2056?security=tls&insecure=1&sni=bl1.mangshe.xyz#@WiFi-@V2ray_Alpha-10
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@bl1.mangshe.xyz:2056?security=tls&insecure=1&sni=bl1.mangshe.xyz#@WiFi-@V2ray_Raha-10
-hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@bl2.mangshe.xyz:2056?security=tls&insecure=1&sni=bl2.mangshe.xyz#@meli_proxyy
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@bl2.mangshe.xyz:2056?security=tls&insecure=1&sni=bl2.mangshe.xyz#IR-@V2ray_Alpha-13
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@bl2.mangshe.xyz:2056?security=tls&insecure=1&sni=bl2.mangshe.xyz#IR-@V2ray_Raha-13
-hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@cc1.mangshe.xyz:2056?security=tls&insecure=1&sni=cc1.mangshe.xyz#@meli_proxyy
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@cc1.mangshe.xyz:2056?security=tls&insecure=1&sni=cc1.mangshe.xyz#IR-@V2ray_Alpha-5
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@cc1.mangshe.xyz:2056?security=tls&insecure=1&sni=cc1.mangshe.xyz#IR-@V2ray_Raha-5
-hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@cc2.mangshe.xyz:2056?security=tls&insecure=1&sni=cc2.mangshe.xyz#@meli_proxyy
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@cc2.mangshe.xyz:2056?security=tls&insecure=1&sni=cc2.mangshe.xyz#IR-@V2ray_Alpha-6
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@cc2.mangshe.xyz:2056?security=tls&insecure=1&sni=cc2.mangshe.xyz#IR-@V2ray_Raha-6
-hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@dj1.mangshe.xyz:2056?security=tls&insecure=1&sni=dj1.mangshe.xyz#@meli_proxyy
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@dj1.mangshe.xyz:2056?security=tls&insecure=1&sni=dj1.mangshe.xyz#IR-@V2ray_Alpha-7
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@dj1.mangshe.xyz:2056?security=tls&insecure=1&sni=dj1.mangshe.xyz#IR-@V2ray_Raha-7
-hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@dj2.mangshe.xyz:2056?security=tls&insecure=1&sni=dj2.mangshe.xyz#@meli_proxyy
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@dj2.mangshe.xyz:2056?security=tls&insecure=1&sni=dj2.mangshe.xyz#IR-@V2ray_Alpha-8
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@dj2.mangshe.xyz:2056?security=tls&insecure=1&sni=dj2.mangshe.xyz#IR-@V2ray_Raha-8
-hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@fhc1.mangshe.xyz:2056?security=tls&insecure=1&sni=fhc1.mangshe.xyz#@meli_proxyy
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@fhc1.mangshe.xyz:2056?security=tls&insecure=1&sni=fhc1.mangshe.xyz#IR-@V2ray_Alpha-11
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@fhc1.mangshe.xyz:2056?security=tls&insecure=1&sni=fhc1.mangshe.xyz#IR-@V2ray_Raha-11
-hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@fhc1.mangshe.xyz:2056?security=tls&insecure=1&sni=fhc1.mangshe.xyz#سرور رایگان پرسرعت🌊 @vmess_ir
-hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@hdlb1.mangshe.xyz:2056?security=tls&insecure=1&sni=hdlb1.mangshe.xyz#@meli_proxyy
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@hdlb1.mangshe.xyz:2056?security=tls&insecure=1&sni=hdlb1.mangshe.xyz#IR-@V2ray_Alpha-18
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@hdlb1.mangshe.xyz:2056?security=tls&insecure=1&sni=hdlb1.mangshe.xyz#IR-@V2ray_Raha-18
-hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@jd1.mangshe.xyz:2056?security=tls&insecure=1&sni=jd1.mangshe.xyz#@meli_proxyy
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@jd1.mangshe.xyz:2056?security=tls&insecure=1&sni=jd1.mangshe.xyz#IR-@V2ray_Alpha-16
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@jd1.mangshe.xyz:2056?security=tls&insecure=1&sni=jd1.mangshe.xyz#IR-@V2ray_Raha-16
-hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@ld1.mangshe.xyz:2056?security=tls&insecure=1&sni=ld1.mangshe.xyz#@meli_proxyy
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@ld1.mangshe.xyz:2056?security=tls&insecure=1&sni=ld1.mangshe.xyz#IR-@V2ray_Alpha-14
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@ld1.mangshe.xyz:2056?security=tls&insecure=1&sni=ld1.mangshe.xyz#IR-@V2ray_Raha-14
-hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@mm1.mangshe.xyz:2056?security=tls&insecure=1&sni=mm1.mangshe.xyz#@meli_proxyy
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@mm1.mangshe.xyz:2056?security=tls&insecure=1&sni=mm1.mangshe.xyz#IR-@V2ray_Alpha-9
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@mm1.mangshe.xyz:2056?security=tls&insecure=1&sni=mm1.mangshe.xyz#IR-@V2ray_Raha-9
-hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@mm2.mangshe.xyz:2056?security=tls&insecure=1&sni=mm2.mangshe.xyz#@meli_proxyy
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@mm2.mangshe.xyz:2056?security=tls&insecure=1&sni=mm2.mangshe.xyz#IR-@V2ray_Alpha-10
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@mm2.mangshe.xyz:2056?security=tls&insecure=1&sni=mm2.mangshe.xyz#IR-@V2ray_Raha-10
-hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@sbl.mangshe.xyz:2056?security=tls&insecure=1&sni=sbl.mangshe.xyz#@meli_proxyy
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@sbl.mangshe.xyz:2056?security=tls&insecure=1&sni=sbl.mangshe.xyz#IR-@V2ray_Alpha-17
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@sbl.mangshe.xyz:2056?security=tls&insecure=1&sni=sbl.mangshe.xyz#IR-@V2ray_Raha-17
-hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@sr1.mangshe.xyz:2056?security=tls&insecure=1&sni=sr1.mangshe.xyz#@meli_proxyy
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@sr1.mangshe.xyz:2056?security=tls&insecure=1&sni=sr1.mangshe.xyz#IR-@V2ray_Alpha-15
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@sr1.mangshe.xyz:2056?security=tls&insecure=1&sni=sr1.mangshe.xyz#IR-@V2ray_Raha-15
 hysteria2://95c2b673-d899-4ff4-a6c1-eafa74268a5e@166.1.18.244:26699?security=tls&insecure=1#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
 hysteria2://95c2b673-d899-4ff4-a6c1-eafa74268a5e@166.1.18.244:26699?security=tls&insecure=1#MCI-@V2ray_Alpha-9
 hysteria2://95c2b673-d899-4ff4-a6c1-eafa74268a5e@166.1.18.244:26699?security=tls&insecure=1#MCI-@V2ray_Raha-9
-hysteria2://95c2b673-d899-4ff4-a6c1-eafa74268a5e@166.1.18.244:26699?security=tls&insecure=1#سرور رایگان پرسرعت🌊 @vmess_ir
 hysteria2://95c2b673-d899-4ff4-a6c1-eafa74268a5e@166.1.18.244:26699?security=tls&insecure=1#🇺🇸|US|美国|@wxgqlfx|59
 hysteria2://9SbSesP9Q3@ir.ir.ir.speedtest.net.iririr.monster:28188?sni=ir.ir.ir.speedtest.net.iririr.monster&insecure=1#hysteria2-28188
 hysteria2://9SbSesP9Q3@ir.ir.ir.speedtest.net.iririr.monster:28188?sni=ir.ir.ir.speedtest.net.iririr.monster&insecure=1#hysteria2-28188   برنامه مورد استفاده در اندروید hiddify در ویندوز hiddify و nekobox(پیشنهادی)
@@ -72,10 +55,8 @@ hysteria2://KevinZakarian@kevin.serverv.net:8443?&insecure=1&obfs=salamander&obf
 hysteria2://KevinZakarian@kevin.serverv.net:8443?obfs=salamander&obfs-password=KevinZakarian&insecure=1#KevinVPN
 hysteria2://Telegram:@KevinZakarian@kevin.iserver.store:8443?obfs=salamander&obfs-password=Telegram:@KevinZakarian&insecure=1#KevinVPN
 hysteria2://Telegram:@KevinZakarian@kevin.iserver.store:8443?security=tls&obfs=salamander&obfs-password=Telegram:@KevinZakarian&insecure=1&sni=Telegram : @JOKERRVPN -JOKERRVPN : @JOKERRVPN -JOKERRVPN : @JOKERRVPN -JOKERRVPN : @JOKERRVPN -JOKERRVPN : @JOKERRVPN -JOKERRVPN : @JOKERRVPN -JOKERRVPN : @JOKERRVPN -JOKERRVPN : @JOKERRVPN -JOKERRVPN : @JOKERRVPN -JOKERRVPN : @JOKERRVPN -JOKERRVPN : @JOKERRVPN#🇳🇱🌏 @customv2ray کانفیگ های بیشتر عضو شو
-hysteria2://ThisIsNotForSale-Free$ervice@52.163.114.191:443?security=tls&insecure=1&sni=api.tg8lnk.tech#@meli_proxyy
 hysteria2://ThisIsNotForSale-Free$ervice@52.163.114.191:443?security=tls&insecure=1&sni=api.tg8lnk.tech#IR-@V2ray_Alpha-3
 hysteria2://ThisIsNotForSale-Free$ervice@52.163.114.191:443?security=tls&insecure=1&sni=api.tg8lnk.tech#IR-@V2ray_Raha-3
-hysteria2://ThisIsNotForSale-Free$ervice@52.187.5.16:443?security=tls&insecure=1&sni=api.tg8lnk.tech#@meli_proxyy
 hysteria2://ThisIsNotForSale-Free$ervice@52.187.5.16:443?security=tls&insecure=1&sni=api.tg8lnk.tech#IR-@V2ray_Alpha-2
 hysteria2://ThisIsNotForSale-Free$ervice@52.187.5.16:443?security=tls&insecure=1&sni=api.tg8lnk.tech#IR-@V2ray_Raha-2
 hysteria2://ThisIsNotForSale-Free$ervice@api.tg8lnk.tech:443#Singapore 1
@@ -93,6 +74,7 @@ hysteria2://de08f485-8f8c-4316-9e80-6e7ecdf91d45@14in.prometheusnet01.xyz:24149?
 hysteria2://de08f485-8f8c-4316-9e80-6e7ecdf91d45@24sg.prometheusnet01.xyz:23729?insecure=1&obfs=none&mport=21000-26000&fastopen=1#🇸🇬24新加坡-联通/移动(hy2)
 hysteria2://dongtaiwang.com@46.17.41.189:50717?security=tls&insecure=1&sni=www.bing.com#WiFi-@V2ray_Alpha-10
 hysteria2://f0c28384-b2bd-4911-be81-0f2a3131b9ea@146.56.116.145:55228?security=tls&insecure=1&sni=bing.com#MTN+⚠️↗️+@RsV2ray+↖️
+hysteria2://f54584e2-640f-4c18-ae11-35c0a87fd730@188.68.240.161:59350?security=tls&insecure=1&sni=www.bing.com#ir-@V2ray_Alpha-1
 hysteria2://f8d473b9-5724-489e-8841-cf4565203c9e@45.140.169.231:8080?security=tls&insecure=1&sni=www.bing.com#MCI-@V2ray_Alpha-05
 hysteria2://few4139098219@172.172.36.217:7863?security=tls&insecure=1&sni=bing.com#@WiFi-@V2ray_Alpha-11
 hysteria2://few4139098219@172.172.36.217:7863?security=tls&insecure=1&sni=bing.com#@WiFi-@V2ray_Raha-11
