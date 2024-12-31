@@ -1,10 +1,7 @@
 hysteria2://123456@192.3.85.237:443?security=tls&insecure=1&sni=bing.com#IR-@V2ray_Alpha-4
 hysteria2://28c05d48e2f470d07a4c392c9bd43849@quran.mci.ai:443?security=tls&insecure=0#🇹🇷+Türkiye+(Hysteria)+⚡
 hysteria2://28c05d48e2f470d07a4c392c9bd43849@quran.mci.ai:443?security=tls&insecure=0&sni=quran.mci.ai#https://t.me/v2roay
-hysteria2://338b9800-fb4d-4934-8425-388f6d4342f5@tw.akebi.cc:30000?security=tls&insecure=1&sni=tw.akebi.cc#🇨🇳|CN|中国|@wxgqlfx|66
-hysteria2://338b9800-fb4d-4934-8425-388f6d4342f5@tw2.akebi.cc:2002?security=tls&insecure=1&sni=hk03.akebi.cc#🇨🇳|CN|中国|@wxgqlfx|65
 hysteria2://338b9800-fb4d-4934-8425-388f6d4342f5@tw3.akebi.cc:2010?security=tls&insecure=1&sni=hk02.akebi.cc#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
-hysteria2://338b9800-fb4d-4934-8425-388f6d4342f5@tw3.akebi.cc:2010?security=tls&insecure=1&sni=hk02.akebi.cc#🇨🇳|CN|中国|@wxgqlfx|182
 hysteria2://4c0064e3-3ad6-4c96-bf21-4eb7ea4bbcb5@38.181.76.213:8882?security=tls&insecure=1#WiFi-@V2ray_Alpha-09
 hysteria2://57c0ba73-b381-4fa6-aad0-f87c72a4d2d1@[2407:3640:2185:9595:0:1:c2d0:9336]:59001?security=tls&insecure=1#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
 hysteria2://57c0ba73-b381-4fa6-aad0-f87c72a4d2d1@[2407:3640:2185:9595:0:1:c2d0:9336]:59001?security=tls&insecure=1#@Pashmam_Vpn سرور های بیشتر
@@ -31,7 +28,6 @@ hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@sbl.mangshe.xyz:2056?security=t
 hysteria2://8d320b07-26fc-4a58-9ef8-e443fbd1f056@sr1.mangshe.xyz:2056?security=tls&insecure=1&sni=sr1.mangshe.xyz#IR-@V2ray_Alpha-15
 hysteria2://95c2b673-d899-4ff4-a6c1-eafa74268a5e@166.1.18.244:26699?security=tls&insecure=1#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
 hysteria2://95c2b673-d899-4ff4-a6c1-eafa74268a5e@166.1.18.244:26699?security=tls&insecure=1#MCI-@V2ray_Alpha-9
-hysteria2://95c2b673-d899-4ff4-a6c1-eafa74268a5e@166.1.18.244:26699?security=tls&insecure=1#🇺🇸|US|美国|@wxgqlfx|184
 hysteria2://95eb72fe-e967-4540-ac10-069c8a95c6d7@108.181.23.231:443?security=tls&insecure=1&mport=50000-53000&sni=www.microsoft.com#@meli_proxyy
 hysteria2://95eb72fe-e967-4540-ac10-069c8a95c6d7@108.181.23.231:443?security=tls&insecure=1&mport=50000-53000&sni=www.microsoft.com#MCI-V2ray_Alpha-2
 hysteria2://95eb72fe-e967-4540-ac10-069c8a95c6d7@108.181.23.231:443?security=tls&insecure=1&mport=50000-53000&sni=www.microsoft.com#MCI-V2ray_Raha-2
@@ -73,10 +69,10 @@ hysteria2://KevinZakarian@kevin.serverv.net:8443?obfs=salamander&obfs-password=K
 hysteria2://Telegram:@KevinZakarian@kevin.iserver.store:8443?obfs=salamander&obfs-password=Telegram:@KevinZakarian&insecure=1#KevinVPN
 hysteria2://ThisIsNotForSale-Free$ervice@52.163.114.191:443?security=tls&insecure=1&sni=api.tg8lnk.tech#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
 hysteria2://ThisIsNotForSale-Free$ervice@52.163.114.191:443?security=tls&insecure=1&sni=api.tg8lnk.tech#IR-@V2ray_Alpha-3
-hysteria2://ThisIsNotForSale-Free$ervice@52.163.114.191:443?security=tls&insecure=1&sni=api.tg8lnk.tech#🇸🇬|SG|新加坡|@wxgqlfx|181
+hysteria2://ThisIsNotForSale-Free$ervice@52.163.114.191:443?security=tls&insecure=1&sni=api.tg8lnk.tech#🇸🇬|SG|新加坡|@wxgqlfx|109
 hysteria2://ThisIsNotForSale-Free$ervice@52.187.5.16:443?security=tls&insecure=1&sni=api.tg8lnk.tech#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
 hysteria2://ThisIsNotForSale-Free$ervice@52.187.5.16:443?security=tls&insecure=1&sni=api.tg8lnk.tech#IR-@V2ray_Alpha-2
-hysteria2://ThisIsNotForSale-Free$ervice@52.187.5.16:443?security=tls&insecure=1&sni=api.tg8lnk.tech#🇺🇸|US|美国|@wxgqlfx|179
+hysteria2://ThisIsNotForSale-Free$ervice@52.187.5.16:443?security=tls&insecure=1&sni=api.tg8lnk.tech#🇺🇸|US|美国|@wxgqlfx|108
 hysteria2://ThisIsNotForSale-Free$ervice@api.tg8lnk.tech:443?security=tls&insecure=0#⚙️𝐣𝐨𝐢𝐧𓄂𓆃 @v2rayngrit
 hysteria2://ThisIsNotForSale-Free$ervice@api.tg8lnk.tech:443?security=tls&insecure=1#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
 hysteria2://ThisIsNotForSale-Free$ervice@api.tg8lnk.tech:443?security=tls&insecure=1#@V2ray1_Ng
@@ -84,7 +80,7 @@ hysteria2://ThisIsNotForSale-Free$ervice@api.tg8lnk.tech:443?security=tls&insecu
 hysteria2://ThisIsNotForSale-Free$ervice@api.tg8lnk.tech:443?security=tls&insecure=1#@WiFi-@V2ray_Alpha-9
 hysteria2://ThisIsNotForSale-Free$ervice@api.tg8lnk.tech:443?security=tls&insecure=1#MCI-@V2ray_Alpha-06
 hysteria2://ThisIsNotForSale-Free$ervice@api.tg8lnk.tech:443?security=tls&insecure=1#⚡Telegram = @SOSkeyNET
-hysteria2://ThisIsNotForSale-Free$ervice@api.tg8lnk.tech:443?security=tls&insecure=1#🇸🇬|SG|新加坡|@wxgqlfx|180
+hysteria2://ThisIsNotForSale-Free$ervice@api.tg8lnk.tech:443?security=tls&insecure=1#🇺🇸|US|美国|@wxgqlfx|120
 hysteria2://ThisIsNotForSale-Free$ervice@api.tg8lnk.tech:443?security=tls&insecure=1#🔰@fast_2ray 👈سرورهای‌بیشتر
 hysteria2://a2c3fe27-2df2-4acb-92a1-2c56ef6ca896@kaikaixinxin-ca.legeth.xyz:443?security=tls&insecure=0&mport=61001-61999&sni=kaikaixinxin-ca.legeth.xyz#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
 hysteria2://aa9b1e2e-caa3-4f8a-8ec5-cf915ee240ea@02.v2cat.cc:8443?security=tls&insecure=0&sni=02.v2cat.cc#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
@@ -113,6 +109,7 @@ hysteria2://dongtaiwang.com@46.17.41.189:50717?security=tls&insecure=1&sni=www.b
 hysteria2://dongtaiwang.com@46.17.41.189:50717?security=tls&insecure=1&sni=www.bing.com#MCI-@V2ray_Raha-5
 hysteria2://dongtaiwang.com@46.17.41.189:50717?security=tls&insecure=1&sni=www.bing.com#MCI-@V2ray_Raha-6
 hysteria2://dongtaiwang.com@46.17.41.189:50717?security=tls&insecure=1&sni=www.bing.com#WiFi-@V2ray_Alpha-10
+hysteria2://dongtaiwang.com@46.17.41.189:50717?security=tls&insecure=1&sni=www.bing.com#🇷🇺|RU|俄罗斯|@wxgqlfx|104
 hysteria2://e07e6bb4-1a55-4e5f-92c5-25585c9715b6@hk.vvcloud.us.kg:443?security=tls&insecure=0&mport=20901-20999&sni=hk.vvcloud.us.kg#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
 hysteria2://e07e6bb4-1a55-4e5f-92c5-25585c9715b6@sg.vvcloud.us.kg:443?security=tls&insecure=0&mport=20901-20999&sni=sg.vvcloud.us.kg#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
 hysteria2://e07e6bb4-1a55-4e5f-92c5-25585c9715b6@us.vvcloud.us.kg:443?security=tls&insecure=0&mport=20901-20999&sni=us.vvcloud.us.kg#(@VmessProtocol)برای خرید و اتصال دائمی جوین شو🇩🇪
@@ -123,4 +120,5 @@ hysteria2://f3182d97-8472-4433-8d75-7598d6978364@kaikaixinxin-ca.legeth.xyz:443?
 hysteria2://f8d473b9-5724-489e-8841-cf4565203c9e@45.140.169.231:8080?security=tls&insecure=1&sni=www.bing.com#MCI-@V2ray_Alpha-05
 hysteria2://few4139098219@172.172.36.217:7863?security=tls&insecure=1&sni=bing.com#@WiFi-@V2ray_Alpha-11
 hysteria2://few4139098219@172.172.36.217:7863?security=tls&insecure=1&sni=bing.com#MCI-@V2ray_Alpha-8
+hysteria2://kugQgm1cWt@91.184.242.252:443?security=tls&obfs=salamander&obfs-password=ZHr2aBtNWmYGZ8NnBfjxU7A&insecure=1&sni=www.bing.com#🇷🇺|RU|俄罗斯|@wxgqlfx|107
 hysteria2://undefined@ir.ir.ir.speedtest.net.iririr.monster:28188?sni=ir.ir.ir.speedtest.net.iririr.monster&insecure=1#@Fv2ray
