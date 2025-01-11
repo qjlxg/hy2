@@ -150,7 +150,6 @@ trojan://79c935c0-27dc-4383-b307-dcac1b8e5509@104.149.155.13:443?security=tls&sn
 trojan://7c18cd10-243d-49f1-9d5f-90febae16653@2jpmax05.233235.xyz:666?security=tls&sni=2jpmax05.233235.xyz&type=tcp&headerType=none#@disconnectedconfig-hamrahaval01.03
 trojan://7c58bf11-9175-46d1-accf-e1883bf0d5f8@svip.88de.hongxingdl.vip:28721?security=tls&sni=mmbiz1.redapricotcloud.com&type=tcp&headerType=none#不定期抽奖https://t.me/mftizi
 trojan://7d47fe63-71ce-4966-b962-218e4ed0c83c@newyork.artunnel57.host:443?security=tls&type=grpc&mode=gun&serviceName=trojan-grpc&sni=newyork.artunnel57.host#Trojan_gRPC
-trojan://7daf833c-37b9-4afc-8495-96590f03f781@120.232.217.96:21332?allowInsecure=1&sni=120.232.217.96
 trojan://7daf833c-37b9-4afc-8495-96590f03f781@120.232.217.96:21332?allowInsecure=1&sni=120.232.217.96#@Hope_Net-join-us-on-Telegram
 trojan://7f2b54d0-c85d-11ef-9e18-1239d0255272@fr1.test3.net:443?security=tls&headerType=none&type=tcp&sni=zula.ir#@V2ray1_Ng
 trojan://7f2b54d0-c85d-11ef-9e18-1239d0255272@fr1.test3.net:443?security=tls&headerType=none&type=tcp&sni=zula.ir#@V2ray1_kingofilter
@@ -226,13 +225,11 @@ trojan://SSorg@103.116.7.133:2083?path=/?ed&security=tls&host=ssjj.esslh.filegea
 trojan://SSorg@103.116.7.189:443?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇯🇵|JP|日本|@wxgqlfx|283
 trojan://SSorg@103.116.7.248:443?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇯🇵|JP|日本|@wxgqlfx|358
 trojan://SSorg@103.116.7.67:2083?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇯🇵|JP|日本|@wxgqlfx|347
-trojan://SSorg@103.137.63.3:443?allowInsecure=0&sni=sstjj.esslh.filegear-sg.me#@Hope_Net-join-us-on-Telegram
 trojan://SSorg@104.129.166.131:8443?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|54
-trojan://SSorg@104.19.4.237:8443?allowInsecure=0&sni=sstjj.esslh.filegear-sg.me#@Hope_Net-join-us-on-Telegram
+trojan://SSorg@104.19.107.190:2096?allowInsecure=0&sni=sstjj.esslh.filegear-sg.me#@Hope_Net-join-us-on-Telegram
 trojan://SSorg@104.19.57.203:8443?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|322
 trojan://SSorg@104.19.60.104:2096?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|250
 trojan://SSorg@104.21.10.106:2083?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|249
-trojan://SSorg@106.240.1.52:20443?allowInsecure=0&sni=sstjj.esslh.filegear-sg.me#@Hope_Net-join-us-on-Telegram
 trojan://SSorg@108.162.194.223:2087?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|169
 trojan://SSorg@108.165.152.130:2083?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|305
 trojan://SSorg@108.165.152.18:2087?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|341
@@ -249,7 +246,6 @@ trojan://SSorg@108.165.152.59:2087?security=tls&headerType=&type=tcp&sni=ssjj.es
 trojan://SSorg@108.165.152.67:2053?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|269
 trojan://SSorg@108.165.152.76:2096?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|87
 trojan://SSorg@108.165.152.80:2083?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|66
-trojan://SSorg@108.165.152.98:2087?allowInsecure=0&sni=sstjj.esslh.filegear-sg.me#@Hope_Net-join-us-on-Telegram
 trojan://SSorg@129.146.46.164:443?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|43
 trojan://SSorg@154.197.64.104:8443?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇨🇳|CN|中国|@wxgqlfx|81
 trojan://SSorg@154.197.64.155:2053?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇨🇳|CN|中国|@wxgqlfx|67
@@ -265,7 +261,6 @@ trojan://SSorg@154.197.64.67:443?path=/?ed&security=tls&host=ssjj.esslh.filegear
 trojan://SSorg@154.211.8.109:2087?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇨🇳|CN|中国|@wxgqlfx|46
 trojan://SSorg@154.211.8.155:443?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇨🇳|CN|中国|@wxgqlfx|348
 trojan://SSorg@154.211.8.220:2096?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇨🇳|CN|中国|@wxgqlfx|243
-trojan://SSorg@154.211.8.47:2096?allowInsecure=0&sni=sstjj.esslh.filegear-sg.me#@Hope_Net-join-us-on-Telegram
 trojan://SSorg@154.211.8.98:2087?path=/&security=tls&host=ssjj.esslh.filegear-sg.me&type=ws&sni=ssjj.esslh.filegear-sg.me#🇨🇳|CN|中国|@wxgqlfx|124
 trojan://SSorg@154.218.15.250:2083?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇨🇳|CN|中国|@wxgqlfx|357
 trojan://SSorg@154.219.5.55:443?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇨🇳|CN|中国|@wxgqlfx|58
@@ -284,7 +279,6 @@ trojan://SSorg@173.245.59.202:2083?security=tls&headerType=&type=tcp&sni=ssjj.es
 trojan://SSorg@176.124.223.40:2053?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇷🇺|RU|俄罗斯|@wxgqlfx|50
 trojan://SSorg@176.124.223.50:8443?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇷🇺|RU|俄罗斯|@wxgqlfx|78
 trojan://SSorg@176.53.144.206:8443?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇬🇧|GB|英国|@wxgqlfx|73
-trojan://SSorg@18.171.236.219:8443?allowInsecure=0&sni=sstjj.esslh.filegear-sg.me#@Hope_Net-join-us-on-Telegram
 trojan://SSorg@185.119.117.146:8443?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇦🇹|AT|奥地利|@wxgqlfx|330
 trojan://SSorg@188.164.159.138:2083?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇦🇲|AM|亚美尼亚|@wxgqlfx|37
 trojan://SSorg@188.164.159.25:2053?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇦🇲|AM|亚美尼亚|@wxgqlfx|48
@@ -297,17 +291,14 @@ trojan://SSorg@199.34.228.190:2083?security=tls&headerType=&type=tcp&sni=ssjj.es
 trojan://SSorg@206.238.236.16:443?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|237
 trojan://SSorg@206.238.236.219:2083?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|297
 trojan://SSorg@206.238.236.251:2083?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|307
-trojan://SSorg@206.238.236.31:8443?allowInsecure=0&sni=sstjj.esslh.filegear-sg.me#@Hope_Net-join-us-on-Telegram
 trojan://SSorg@206.238.236.90:2087?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|314
 trojan://SSorg@206.238.237.146:2083?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|321
 trojan://SSorg@206.238.237.212:443?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|195
 trojan://SSorg@209.94.90.87:2087?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🏳️|unKnow|未知|@wxgqlfx|317
-trojan://SSorg@212.41.15.119:443?allowInsecure=0&sni=sstjj.esslh.filegear-sg.me#@Hope_Net-join-us-on-Telegram
 trojan://SSorg@212.41.15.119:443?allowInsecure=0&sni=sstjj.esslh.filegear-sg.me#🟣🔥+کانال+سرور+رایگان+@FarahVPN
 trojan://SSorg@216.24.57.186:443?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇺🇸|US|美国|@wxgqlfx|329
 trojan://SSorg@27.50.48.126:2083?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇨🇳|CN|中国|@wxgqlfx|62
 trojan://SSorg@27.50.48.186:2083?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇨🇳|CN|中国|@wxgqlfx|41
-trojan://SSorg@27.50.48.189:2083?allowInsecure=0&sni=sstjj.esslh.filegear-sg.me#@Hope_Net-join-us-on-Telegram
 trojan://SSorg@27.50.48.189:2083?allowInsecure=0&sni=sstjj.esslh.filegear-sg.me#t.me/entryNET
 trojan://SSorg@27.50.48.239:8443?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇨🇳|CN|中国|@wxgqlfx|61
 trojan://SSorg@27.50.49.37:2053?security=tls&headerType=&type=tcp&sni=ssjj.esslh.filegear-sg.me#🇨🇳|CN|中国|@wxgqlfx|178
@@ -342,7 +333,6 @@ trojan://SSorg@91.107.253.14:8443?security=tls&headerType=&type=tcp&sni=ssjj.ess
 trojan://SSorg@92.243.74.115:443?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇷🇺|RU|俄罗斯|@wxgqlfx|55
 trojan://SSorg@92.243.74.23:2096?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇷🇺|RU|俄罗斯|@wxgqlfx|91
 trojan://SSorg@92.243.75.49:2087?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇷🇺|RU|俄罗斯|@wxgqlfx|45
-trojan://SSorg@92.53.190.161:2087?allowInsecure=0&sni=sstjj.esslh.filegear-sg.me#@Hope_Net-join-us-on-Telegram
 trojan://SSorg@92.53.190.161:2087?path=/?ed&security=tls&host=ssjj.esslh.filegear-sg.mehttp/1.1&type=ws&sni=ssjj.esslh.filegear-sg.me#🇸🇮|SI|斯洛文尼亚|@wxgqlfx|84
 trojan://TGCitizenScyu@104.18.20.69:2087?security=tls&headerType=&type=tcp&sni=maikeaxiang.me#🇺🇸|US|美国|@wxgqlfx|342
 trojan://TGCitizenScyu@104.18.21.69:2087?security=tls&headerType=&type=tcp&sni=maikeaxiang.me#🇺🇸|US|美国|@wxgqlfx|288
@@ -717,6 +707,7 @@ trojan://telegram-id-directvpn@3.146.93.242:22222?type=tcp&security=tls&sni=troj
 trojan://telegram-id-directvpn@3.146.93.242:22222?type=tcp&security=tls&sni=trojan.burgerip.co.uk&allowInsecure=1#🇺🇸_定制专线：@QS00008
 trojan://telegram-id-directvpn@3.147.224.123:22222/?type=tcp&security=tls&sni=trojan.burgerip.co.uk&allowInsecure=1#Our
 trojan://telegram-id-directvpn@3.71.231.138:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#Our Channel : @DirectVPN
+trojan://telegram-id-directvpn@3.71.231.138:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚜️Telegram:@IP_CF
 trojan://telegram-id-directvpn@3.71.231.138:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚡Telegram = @SOSkeyNET
 trojan://telegram-id-directvpn@3.78.55.231:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#AutoRAY+|+Saturday+00:05
 trojan://telegram-id-directvpn@3.79.131.235:22222?security=tls&sni=trj.rollingnext.co.uk&type=tcp&headerType=none#@disconnectedconfig-irancell
@@ -752,6 +743,7 @@ trojan://telegram-id-directvpn@51.21.126.203:22222?security=tls&alpn=http/1.1&he
 trojan://telegram-id-directvpn@51.21.126.203:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚡Telegram = @SOSkeyNET
 trojan://telegram-id-directvpn@51.21.93.63:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#@vmesskhodam
 trojan://telegram-id-directvpn@51.44.49.31:22222?allowInsecure=0&sni=trojan.burgerip.co.uk#@Hope_Net-join-us-on-Telegram
+trojan://telegram-id-directvpn@51.44.49.31:22222?allowInsecure=0&sni=trojan.burgerip.co.uk#🟣🔥+کانال+سرور+رایگان+@FarahVPN
 trojan://telegram-id-directvpn@51.44.49.31:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#Our Channel : @DirectVPN
 trojan://telegram-id-directvpn@52.209.214.28:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#https://t.me/ShadowsocksM
 trojan://telegram-id-directvpn@52.30.156.175:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#@satafkompani
@@ -765,6 +757,7 @@ trojan://telegram-id-directvpn@54.73.47.128:22222?security=tls&alpn=http/1.1&hea
 trojan://telegram-id-directvpn@54.75.207.130:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#Our
 trojan://telegram-id-directvpn@63.176.251.251:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#Our Channel : @DirectVPN
 trojan://telegram-id-directvpn@63.176.251.251:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚡Telegram = @SOSkeyNET
+trojan://telegram-id-directvpn@63.177.123.99:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#Our Channel : @DirectVPN
 trojan://telegram-id-directvpn@63.177.34.220:22222?type=tcp&sni=trojan.burgerip.co.uk&allowInsecure=1http/1.1#🇺🇸_定制专线：@Alin006Bot
 trojan://telegram-id-directvpn@63.177.34.220:22222?type=tcp&sni=trojan.burgerip.co.uk&allowInsecure=1http/1.1#🇺🇸_定制专线：@QS00008
 trojan://telegram-id-directvpn@63.33.77.210:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#سرور های رایگان در کانال satellitenewspersian@✅
@@ -803,9 +796,7 @@ trojan://telegram-id-privatevpns@15.237.168.157:22222/?type=tcp&security=tls&sni
 trojan://telegram-id-privatevpns@15.237.172.59:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#(S116)🇨🇵t.me/PrivateVPNs
 trojan://telegram-id-privatevpns@15.237.172.59:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚡Telegram = @SOSkeyNET
 trojan://telegram-id-privatevpns@15.237.245.37:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#(S106)🇨🇵t.me/PrivateVPNs
-trojan://telegram-id-privatevpns@15.237.245.37:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚜️Telegram:@IP_CF
 trojan://telegram-id-privatevpns@15.237.245.37:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚡Telegram = @SOSkeyNET
-trojan://telegram-id-privatevpns@15.237.245.37:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#🟣🔥+کانال+سرور+رایگان+@FarahVPN
 trojan://telegram-id-privatevpns@15.237.4.86:22222#🇫🇷 @outlinev
 trojan://telegram-id-privatevpns@16.16.153.200:22222?security=tls&sni=trj.rollingnext.co.uk&type=tcp&headerType=none#@disconnectedconfig-irancell
 trojan://telegram-id-privatevpns@16.171.88.103:22222/?type=tcp&security=tls&sni=trojan.burgerip.co.uk&allowInsecure=1#馃憠馃啍@m3hdio1
@@ -822,6 +813,7 @@ trojan://telegram-id-privatevpns@18.169.75.233:22222?security=tls&alpn=http/1.1&
 trojan://telegram-id-privatevpns@18.170.169.20:22222?type=tcp&security=tls&allowInsecure=1#英国5
 trojan://telegram-id-privatevpns@18.170.179.230:22222/?type=tcp&security=tls&sni=trojan.burgerip.co.uk&allowInsecure=1#馃憠馃啍@m3hdio1
 trojan://telegram-id-privatevpns@18.171.28.57:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#(S107)🇬🇧t.me/PrivateVPNs
+trojan://telegram-id-privatevpns@18.171.28.57:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚜️Telegram:@IP_CF
 trojan://telegram-id-privatevpns@18.171.28.57:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚡Telegram = @SOSkeyNET
 trojan://telegram-id-privatevpns@18.175.41.6:22222?type=tcp&sni=trojan.burgerip.co.uk&allowInsecure=1http/1.1#🇬🇧_定制专线：@Alin006Bot
 trojan://telegram-id-privatevpns@18.175.41.6:22222?type=tcp&sni=trojan.burgerip.co.uk&allowInsecure=1http/1.1#🇬🇧_定制专线：@QS00008
@@ -830,7 +822,6 @@ trojan://telegram-id-privatevpns@18.193.113.18:22222?security=tls&alpn=http/1.1&
 trojan://telegram-id-privatevpns@18.203.118.212:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#(S119)🇨🇮t.me/vmess_iran
 trojan://telegram-id-privatevpns@18.203.118.212:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#https://t.me/ShadowsocksM
 trojan://telegram-id-privatevpns@18.203.49.103:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#(S109)🇨🇮t.me/PrivateVPNs
-trojan://telegram-id-privatevpns@18.203.49.103:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚜️Telegram:@IP_CF
 trojan://telegram-id-privatevpns@18.203.49.103:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚡Telegram = @SOSkeyNET
 trojan://telegram-id-privatevpns@3.10.191.122:22222?type=tcp&security=tls&sni=trojan.burgerip.co.uk#🇬🇧_定制专线：@Alin006Bot
 trojan://telegram-id-privatevpns@3.10.191.122:22222?type=tcp&security=tls&sni=trojan.burgerip.co.uk#🇬🇧_定制专线：@QS00008
@@ -858,25 +849,25 @@ trojan://telegram-id-privatevpns@3.8.214.109:22222?security=tls&alpn=http/1.1&he
 trojan://telegram-id-privatevpns@34.241.156.183:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#@
 trojan://telegram-id-privatevpns@34.241.156.183:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#https://t.me/ShadowsocksM
 trojan://telegram-id-privatevpns@35.177.98.41:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trj.rollingnext.co.uk#(S128)🇬🇧
-trojan://telegram-id-privatevpns@35.178.93.150:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#🟣🔥+کانال+سرور+رایگان+@FarahVPN
 trojan://telegram-id-privatevpns@35.180.219.174:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#🇫🇷_FR_法国
 trojan://telegram-id-privatevpns@35.180.219.174:22222?sni=trojan.burgerip.co.uk#🇫🇷_FR_法国
 trojan://telegram-id-privatevpns@51.20.195.87:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#(S101)🇸🇪t.me/vmess_iran
 trojan://telegram-id-privatevpns@51.20.195.87:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#https://t.me/ShadowsocksM
 trojan://telegram-id-privatevpns@51.21.125.29:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#https://t.me/ShadowsocksM
 trojan://telegram-id-privatevpns@51.21.5.124:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#(S112)🇸🇪t.me/PrivateVPNs
-trojan://telegram-id-privatevpns@51.21.5.124:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚜️Telegram:@IP_CF
 trojan://telegram-id-privatevpns@51.21.5.124:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚡Telegram = @SOSkeyNET
+trojan://telegram-id-privatevpns@51.21.72.189:22222?allowInsecure=0&sni=trojan.burgerip.co.uk
+trojan://telegram-id-privatevpns@51.21.72.189:22222?allowInsecure=0&sni=trojan.burgerip.co.uk#@Hope_Net-join-us-on-Telegram
+trojan://telegram-id-privatevpns@51.21.72.189:22222?allowInsecure=0&sni=trojan.burgerip.co.uk#[🇸🇪]t.me/ConfigsHub
 trojan://telegram-id-privatevpns@51.44.38.92:22222?type=tcp&sni=trojan.burgerip.co.uk&allowInsecure=1http/1.1#🇬🇧_定制专线：@Alin006Bot
 trojan://telegram-id-privatevpns@51.44.38.92:22222?type=tcp&sni=trojan.burgerip.co.uk&allowInsecure=1http/1.1#🇬🇧_定制专线：@QS00008
 trojan://telegram-id-privatevpns@52.16.85.24:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.miwan.co.uk#🇮🇪Ireland-کانال تلگرام: @V2rayweb
 trojan://telegram-id-privatevpns@52.211.21.186:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trj.rollingnext.co.uk#(S130)🇨🇮
 trojan://telegram-id-privatevpns@52.47.157.138:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#(S105)🇨🇵t.me/PrivateVPNs
 trojan://telegram-id-privatevpns@52.47.157.138:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚡Telegram = @SOSkeyNET
+trojan://telegram-id-privatevpns@52.47.157.138:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#🟣🔥+کانال+سرور+رایگان+@FarahVPN
 trojan://telegram-id-privatevpns@52.49.13.160:22222/?type=tcp&security=tls&sni=trojan.burgerip.co.uk&allowInsecure=1#(S110)🇨🇮t.me/PrivateVPNs
-trojan://telegram-id-privatevpns@52.51.78.54:22222?allowInsecure=0&sni=trojan.burgerip.co.uk
 trojan://telegram-id-privatevpns@52.51.78.54:22222?allowInsecure=0&sni=trojan.burgerip.co.uk#@Hope_Net-join-us-on-Telegram
-trojan://telegram-id-privatevpns@52.51.78.54:22222?allowInsecure=0&sni=trojan.burgerip.co.uk#[🇮🇪]t.me/ConfigsHub
 trojan://telegram-id-privatevpns@52.51.78.54:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#(S110)🇨🇮t.me/PrivateVPNs
 trojan://telegram-id-privatevpns@52.51.78.54:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#⚡Telegram = @SOSkeyNET
 trojan://telegram-id-privatevpns@54.195.51.50:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#(S120)🇨🇮t.me/PrivateVPNs
@@ -901,7 +892,6 @@ trojan://telegram-id-v2rayvpnchannel@18.118.63.135:22222?security=tls&alpn=http/
 trojan://telegram-id-v2rayvpnchannel@3.141.236.205:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#Our Channel : @v2rayvpnchannel
 trojan://telegram-id-v2rayvpnchannel@3.71.231.138:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#Our Channel : @v2rayvpnchannel
 trojan://telegram-id-v2rayvpnchannel@34.242.253.156:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#Our Channel : @v2rayvpnchannel
-trojan://telegram-id-v2rayvpnchannel@34.242.253.156:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#🟣🔥+کانال+سرور+رایگان+@FarahVPN
 trojan://telegram-id-v2rayvpnchannel@34.242.88.55:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#Our Channel : @v2rayvpnchannel
 trojan://telegram-id-v2rayvpnchannel@35.177.215.121:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#Our Channel : @v2rayvpnchannel
 trojan://telegram-id-v2rayvpnchannel@44.213.198.143:22222?security=tls&alpn=http/1.1&headerType=none&type=tcp&sni=trojan.burgerip.co.uk#Our Channel : @v2rayvpnchannel
