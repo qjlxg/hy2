@@ -9,6 +9,7 @@ import base64
 from bs4 import BeautifulSoup
 from datetime import datetime
 
+# 全局设置
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -56,7 +57,7 @@ def parse_channel(channel, depth, codes, valid_channels, invalid_channels, sem, 
                     break
                 cur_url = f'{channel}?before={last_datbef[0]}'
             except Exception:
-                time.sleep(random.uniform(5, 25))
+                time.sleep(random.uniform(1, 3))
                 continue
 
         found_code = False
@@ -81,14 +82,17 @@ def clean_code(code):
     code = re.sub(r'amp;|�|%0A|%250A|%0D', '', code)
     code = re.sub(r'fp=(firefox|safari|edge|360|qq|ios|android|randomized|random)', 'fp=chrome', code)
     code = code.strip()
+    # 截取协议头
     for proto in ["vmess://", "vless://", "ss://", "trojan://", "tuic://", "hysteria://", "hysteria2://", "hy2://", "juicity://", "nekoray://", "socks4://", "socks5://", "socks://", "naive+"]:
         if proto in code:
             code = proto + code.split(proto, 1)[1]
             break
+    # 去除结尾异常字符
     code = code.rstrip('…»%`')
     return code
 
 def remove_duplicate_nodes(node_list):
+    """删除重复节点，保留唯一节点"""
     seen = set()
     unique_nodes = []
     for node in node_list:
@@ -97,131 +101,51 @@ def remove_duplicate_nodes(node_list):
             seen.add(node)
     return unique_nodes
 
-def fetch_subscribe_links(channels, max_pages=3, sleep_sec=1.0, out_file="data/t.txt"):
-    pattern = r"https?://[^\s'\"<>]*api/v1/client/subscribe\?token=[\w\-]+"
-    urls = set()
-    for channel in channels:
-        base_url = f"https://t.me/s/{channel}"
-        last_id = None
-        for _ in range(max_pages):
-            url = base_url if last_id is None else f"{base_url}?before={last_id}"
-            resp = requests.get(url)
-            resp.encoding = resp.apparent_encoding
-            html = resp.text
-            found = re.findall(pattern, html)
-            urls.update(found)
-            ids = re.findall(r'data-post="[^/]+/(\d+)"', html)
-            if not ids:
-                break
-            min_id = min(map(int, ids))
-            if last_id == min_id:
-                break
-            last_id = min_id
-            time.sleep(sleep_sec)
-    os.makedirs(os.path.dirname(out_file), exist_ok=True)
-    with open(out_file, "w", encoding="utf-8") as f:
-        for url in sorted(urls):
-            f.write(url + "\n")
-    print(f"共找到{len(urls)}个订阅链接，已保存到{out_file}")
-    return sorted(urls)
-
-def test_urls(urls, timeout=10):
-    ok, fail = [], []
-    for url in urls:
-        try:
-            resp = requests.get(url, timeout=timeout)
-            if resp.status_code == 200:
-                ok.append(url)
-            else:
-                fail.append(url)
-        except Exception:
-            fail.append(url)
-    print(f"可用: {len(ok)}，不可用: {len(fail)}")
-    if fail:
-        print("不可用URL：")
-        for u in fail:
-            print(u)
-    return ok, fail
-
 def main():
-    tg_name_json = load_json('telegramchannels.json')
-    inv_tg_name_json = load_json('invalidtelegramchannels.json')
-    inv_tg_name_json = [x for x in inv_tg_name_json if len(x) >= 5]
-    inv_tg_name_json = list(set(inv_tg_name_json) - set(tg_name_json))
+    # 加载数据
+    tg_channels = set(load_json('telegramchannels.json'))
+    invalid_channels = set(load_json('invalidtelegramchannels.json'))
+    config_lines = []
+    if os.path.exists('configtg.txt'):
+        with open('configtg.txt', 'r', encoding='utf-8') as f:
+            config_lines = f.readlines()
 
-    thrd_pars = int(os.getenv('THRD_PARS', '128'))
-    pars_dp = int(os.getenv('PARS_DP', '1'))
-    use_inv_tc = os.getenv('USE_INV_TC', 'n').lower() == 'y'
-
-    print(f'\nTotal channel names in telegramchannels.json         - {len(tg_name_json)}')
-    print(f'Total channel names in invalidtelegramchannels.json - {len(inv_tg_name_json)}')
+    # 用户输入
+    thrd_pars = int(input('\nThreads for parsing: '))
+    pars_dp = int(input('\nParsing depth (1dp = 20 last tg posts): '))
+    print(f'\nTotal channel names in telegramchannels.json         - {len(tg_channels)}')
+    print(f'Total channel names in invalidtelegramchannels.json - {len(invalid_channels)}')
+    use_inv = input('\nTry looking for proxy configs from "invalidtelegramchannels.json" too? (Enter y/n): ').lower() == 'y'
 
     start_time = datetime.now()
-    sem_pars = threading.Semaphore(thrd_pars)
 
+    # 合并无效频道
+    if use_inv:
+        tg_channels |= invalid_channels
+        invalid_channels.clear()
+
+    # 从configtg.txt中提取tg频道名
     print(f'Try get new tg channels name from proxy configs in configtg.txt...')
-    with open("configtg.txt", "r", encoding="utf-8") as config_all_file:
-        config_all = config_all_file.readlines()
+    tg_names_from_config = extract_tg_names_from_config(config_lines)
+    tg_channels |= tg_names_from_config
+    tg_channels = {x for x in tg_channels if len(x) >= 5}
+    print(f'Found tg channel names - {len(tg_names_from_config)}')
+    print(f'Total old names        - {len(tg_channels)}')
 
-    tg_name = list(extract_tg_names_from_config(config_all))
-    tg_name = [x for x in tg_name if len(x) >= 5]
-    tg_name_json = [x for x in tg_name_json if len(x) >= 5]
-    print(f'\nFound tg channel names - {len(tg_name)}')
-    print(f'Total old names        - {len(tg_name_json)}')
-    tg_name_json = sorted(list(set(tg_name_json + tg_name)))
-    print(f'In the end, new names  - {len(tg_name_json)}')
+    save_json('telegramchannels.json', sorted(tg_channels))
 
-    save_json('telegramchannels.json', tg_name_json)
     print(f'\nSearch for new names is over - {str(datetime.now() - start_time).split(".")[0]}')
     print(f'\nStart Parsing...\n')
 
+    # 多线程爬取频道
+    sem = threading.Semaphore(thrd_pars)
     codes = []
-    new_tg_name_json = []
+    valid_channels = set()
+    invalid_channels_new = set()
     htmltag_pattern = re.compile(r'<.*?>')
-    walen = len(tg_name_json)
-
-    def process(i_url):
-        sem_pars.acquire()
-        html_pages = []
-        cur_url = i_url
-        god_tg_name = False
-        for itter in range(1, pars_dp + 1):
-            while True:
-                try:
-                    response = requests.get(f'https://t.me/s/{cur_url}')
-                except:
-                    time.sleep(random.randint(5, 25))
-                    continue
-                else:
-                    if itter == pars_dp:
-                        print(f'{tg_name_json.index(i_url) + 1} of {walen} - {i_url}')
-                    html_pages.append(response.text)
-                    last_datbef = re.findall(r'data-before="(\d*)"', response.text)
-                    break
-            if not last_datbef:
-                break
-            cur_url = f'{i_url}?before={last_datbef[0]}'
-        for page in html_pages:
-            soup = BeautifulSoup(page, 'html.parser')
-            code_tags = soup.find_all(class_='tgme_widget_message_text')
-            for code_tag in code_tags:
-                code_content2 = str(code_tag).split('<br/>')
-                for code_content in code_content2:
-                    if any(proto in code_content for proto in [
-                        "vless://", "ss://", "vmess://", "trojan://", "tuic://",
-                        "hysteria://", "hy2://", "hysteria2://", "juicity://",
-                        "nekoray://", "socks4://", "socks5://", "socks://", "naive+"
-                    ]):
-                        codes.append(re.sub(htmltag_pattern, '', code_content))
-                        new_tg_name_json.append(i_url)
-                        god_tg_name = True
-        if not god_tg_name:
-            inv_tg_name_json.append(i_url)
-        sem_pars.release()
-
     threads = []
-    for url in tg_name_json:
-        t = threading.Thread(target=process, args=(url,))
+    for idx, channel in enumerate(sorted(tg_channels)):
+        t = threading.Thread(target=parse_channel, args=(channel, pars_dp, codes, valid_channels, invalid_channels_new, sem, htmltag_pattern))
         t.start()
         threads.append(t)
     for t in threads:
@@ -230,115 +154,27 @@ def main():
     print(f'\nParsing completed - {str(datetime.now() - start_time).split(".")[0]}')
     print(f'\nStart check and remove duplicate from parsed configs...')
 
-    codes = list(set(codes))
-    processed_codes = []
-    for part in codes:
-        part = clean_code(part)
-        if "vmess://" in part:
-            processed_codes.append(part.strip())
-        elif "vless://" in part and "@" in part and ":" in part[8:]:
-            processed_codes.append(part.strip())
-        elif "ss://" in part:
-            processed_codes.append(part.strip())
-        elif "trojan://" in part and "@" in part and ":" in part[9:]:
-            processed_codes.append(part.strip())
-        elif "tuic://" in part and ":" in part[7:] and "@" in part:
-            processed_codes.append(part.strip())
-        elif "hysteria://" in part and ":" in part[11:] and "=" in part:
-            processed_codes.append(part.strip())
-        elif "hysteria2://" in part and "@" in part and ":" in part[12:]:
-            processed_codes.append(part.strip())
-        elif "hy2://" in part and "@" in part and ":" in part[6:]:
-            processed_codes.append(part.strip())
-        elif "juicity://" in part:
-            processed_codes.append(part.strip())
-        elif "nekoray://" in part:
-            processed_codes.append(part.strip())
-        elif "socks4://" in part and ":" in part[9:]:
-            processed_codes.append(part.strip())
-        elif "socks5://" in part and ":" in part[9:]:
-            processed_codes.append(part.strip())
-        elif "socks://" in part and ":" in part[8:]:
-            processed_codes.append(part.strip())
-        elif "naive+" in part and ":" in part[13:] and "@" in part:
-            processed_codes.append(part.strip())
-
-    print(f'\nTrying to delete corrupted configurations...')
-    processed_codes = list(set(processed_codes))
-    processed_codes = [x for x in processed_codes if (len(x) > 13) and (("…" in x and "#" in x) or ("…" not in x))]
-    new_processed_codes = []
-    for x in processed_codes:
-        x = x.rstrip('…»%`')
-        new_processed_codes.append(x.strip())
-    processed_codes = sorted(set(new_processed_codes))
-
-    processed_codes = remove_duplicate_nodes(processed_codes)
+    # 清洗、去重
+    cleaned_codes = [clean_code(code) for code in codes if len(code) > 13]
+    cleaned_codes = [c for c in cleaned_codes if ("…" in c and "#" in c) or ("…" not in c)]
+    # 节点去重
+    cleaned_codes = remove_duplicate_nodes(cleaned_codes)
+    cleaned_codes = sorted(cleaned_codes)
 
     print(f'\nDelete tg channels that not contains proxy configs...')
-    new_tg_name_json = sorted(set(new_tg_name_json))
-    print(f'\nRemaining tg channels after deletion - {len(new_tg_name_json)}')
-    inv_tg_name_json = sorted(set(inv_tg_name_json))
+    valid_channels = sorted(valid_channels)
+    invalid_channels = sorted(invalid_channels_new | invalid_channels)
 
+    print(f'\nRemaining tg channels after deletion - {len(valid_channels)}')
     print(f'\nSave new telegramchannels.json, invalidtelegramchannels.json and configtg.txt...')
-    save_json('telegramchannels.json', new_tg_name_json)
-    save_json('invalidtelegramchannels.json', inv_tg_name_json)
-    with open("configtg.txt", "w", encoding="utf-8") as file:
-        for code in processed_codes:
-            file.write(code + "\n")
+
+    save_json('telegramchannels.json', valid_channels)
+    save_json('invalidtelegramchannels.json', invalid_channels)
+    with open("configtg.txt", "w", encoding="utf-8") as f:
+        for code in cleaned_codes:
+            f.write(code + "\n")
 
     print(f'\nTime spent - {str(datetime.now() - start_time).split(".")[0]}')
-
-    # ----------- 新增：抓取订阅链接并测试可用性 -----------
-    def fetch_and_test_subscribe_links(channels, max_pages=3, sleep_sec=1.0, out_file="data/t.txt"):
-        pattern = r"https?://[^\s'\"<>]*api/v1/client/subscribe\?token=[\w\-]+"
-        urls = set()
-        for channel in channels:
-            base_url = f"https://t.me/s/{channel}"
-            last_id = None
-            for _ in range(max_pages):
-                url = base_url if last_id is None else f"{base_url}?before={last_id}"
-                resp = requests.get(url)
-                resp.encoding = resp.apparent_encoding
-                html = resp.text
-                found = re.findall(pattern, html)
-                urls.update(found)
-                ids = re.findall(r'data-post="[^/]+/(\d+)"', html)
-                if not ids:
-                    break
-                min_id = min(map(int, ids))
-                if last_id == min_id:
-                    break
-                last_id = min_id
-                time.sleep(sleep_sec)
-        os.makedirs(os.path.dirname(out_file), exist_ok=True)
-        with open(out_file, "w", encoding="utf-8") as f:
-            for url in sorted(urls):
-                f.write(url + "\n")
-        print(f"\n共找到{len(urls)}个订阅链接，已保存到{out_file}")
-        return sorted(urls)
-
-    def test_urls(urls, timeout=10):
-        ok, fail = [], []
-        for url in urls:
-            try:
-                resp = requests.get(url, timeout=timeout)
-                if resp.status_code == 200:
-                    ok.append(url)
-                else:
-                    fail.append(url)
-            except Exception:
-                fail.append(url)
-        print(f"可用: {len(ok)}，不可用: {len(fail)}")
-        if fail:
-            print("不可用URL：")
-            for u in fail:
-                print(u)
-        return ok, fail
-
-    # 使用新tg频道名列表抓取并测试
-    subscribe_urls = fetch_and_test_subscribe_links(new_tg_name_json, max_pages=3)
-    test_urls(subscribe_urls)
-
     input('\nPress Enter to finish ...')
 
 if __name__ == "__main__":
