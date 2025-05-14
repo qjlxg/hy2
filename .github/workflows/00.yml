@@ -1,0 +1,93 @@
+name: Process and Save Nodes
+
+on:
+  workflow_dispatch: # 允许手动触发工作流
+  push:
+    branches: [ main ] # 当 push 到 main 分支时触发 (你可以根据需要修改分支)
+  schedule:
+    - cron: '0 */8 * * *' # 每 8 小时运行一次 (在 UTC 时间)
+
+jobs:
+  process_nodes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install required libraries
+        run: pip install requests
+
+      - name: Get Shanghai Time
+        run: |
+          TZ='Asia/Shanghai' date '+%Y/%m/%d+%H-%M-%S' > sh_timestamp.txt
+
+      - name: Download and Process Nodes
+        id: process
+        run: |
+          import requests
+          import re
+          from datetime import datetime
+          import os
+
+          url = "https://github.com/qjlxg/hy2/raw/refs/heads/main/configtg.txt"
+          try:
+              response = requests.get(url)
+              response.raise_for_status()  # Raise an exception for bad status codes
+              content = response.text.strip().split('\n')
+          except requests.exceptions.RequestException as e:
+              print(f"Error downloading file: {e}")
+              exit(1)
+
+          nodes = set()
+          for line in content:
+              if 'vmess://' in line or 'trojan://' in line or 'ss://' in line or 'ssr://' in line or 'hy2://' in line or 'hysteria2://' in line:
+                  nodes.add(line.strip())
+
+          processed_nodes = []
+          flag_pattern = re.compile(r'[\u{1F1E6}-\u{1F1FF}]{2}')
+          name_pattern = re.compile(r'name=([^&]+)')
+
+          name_flag_map = {}
+          for node in nodes:
+              match_name = name_pattern.search(node)
+              match_flag = flag_pattern.search(match_name.group(1) if match_name else "")
+              if match_flag:
+                  name_flag_map[node] = match_flag.group(0)
+
+          unique_flags = {}
+          for node, flag in name_flag_map.items():
+              if flag not in unique_flags:
+                  unique_flags[flag] = node
+
+          sorted_flags = sorted(unique_flags.keys())
+          count = 1
+          for flag in sorted_flags:
+              processed_nodes.append(f"Bak-{count:03d}::{unique_flags[flag]}")
+              count += 1
+
+          if not os.path.exists('bak'):
+              os.makedirs('bak')
+
+          with open('sh_timestamp.txt', 'r') as f:
+              timestamp_str = f.read().strip()
+              output_filename = os.path.join('bak', f"{timestamp_str}.txt")
+              output_dir = os.path.dirname(output_filename)
+              if not os.path.exists(output_dir):
+                  os.makedirs(output_dir)
+              with open(output_filename, 'w') as outfile:
+                  outfile.write('\n'.join(processed_nodes) + '\n')
+
+          echo "Output saved to: $output_filename"
+          echo "::set-output name=output_file::$output_filename"
+
+      - name: Upload output file
+        uses: actions/upload-artifact@v3
+        with:
+          name: processed_nodes
+          path: ${{ steps.process.outputs.output_file }}
