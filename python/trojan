@@ -13,6 +13,7 @@ trojan://0dd9c2ad-1a7e-435b-8e97-909957ca1724@xray.artunnel57.host:443
 trojan://0ddff0f8-04d6-4eae-a5a6-5af7746bb30d@57.128.173.6:443
 trojan://10f87a8e-a6f6-319d-a895-8310d326ecce@hkhe02.bcloudv.cyou:20897
 trojan://11258980-1234-11f0-a2b3-1239d0255272@uk1.test3.net:443
+trojan://12345678@198.62.62.4:443
 trojan://127c3420-2133-11f0-b720-1239d0255272@uk1.test3.net:443
 trojan://1549e70f-dc57-45e3-ac7c-515f0161db72@104.21.7.147:443
 trojan://1549e70f-dc57-45e3-ac7c-515f0161db72@104.21.7.147:443/
@@ -105,6 +106,7 @@ trojan://5d58b7eb-43c4-448c-90e5-17b2a85ccb3b@sg01.trojanyyds.xyz:443
 trojan://5d58b7eb-43c4-448c-90e5-17b2a85ccb3b@sg02.trojanyyds.xyz:443
 trojan://5de7ba00-1234-11f0-b66e-1239d0255272@fr1.test3.net:443
 trojan://5e2ce79c-170e-484a-8802-40584a1a3a12@naiu-us.05vr9nyqg5.download:13020
+trojan://5e2f888c-68ef-11ef-96ca-f23c9164ca5d@5abd5e38-swgsg0-swy6li-tni2.cu.plebai.net:15229
 trojan://5f5cbdd9cc@82.223.108.64:443
 trojan://6010117d-c631-450d-b24f-cb7e71cce238@fr01.freeflyingcloud.xyz:30502
 trojan://61f7ce90-2132-11f0-ba75-1239d0255272@fr1.test3.net:443
@@ -112,6 +114,9 @@ trojan://6206d21a-81a4-43f6-b88e-052637dce46d@103.234.53.27:50174
 trojan://63db084a-e2ce-46db-9dd6-d4ed2c3d2663@sg01.freeflyingcloud.xyz:35702
 trojan://65f14831-5c67-483f-9e85-f3aa73f21187@naiu-us.05vr9nyqg5.download:13019
 trojan://6884d714-d3c4-4b49-aa20-767ea92837d6@185.133.35.160:443
+trojan://6884d714-d3c4-4b49-aa20-767ea92837d6@192.0.54.184:443
+trojan://6884d714-d3c4-4b49-aa20-767ea92837d6@217.163.76.227:443
+trojan://6884d714-d3c4-4b49-aa20-767ea92837d6@45.67.215.234:443
 trojan://68dc22fb-e7f3-4806-acd7-b4182d80981e@fr01.freeflyingcloud.xyz:30502
 trojan://6bb546f2-5528-31b2-8d8e-cf1eed4076a0@phxv002.jd0001.top:44303
 trojan://6d257b63-0632-4dd6-b021-3085f8dc28b2@jp01.freeflyingcloud.xyz:44402
@@ -176,12 +181,15 @@ trojan://Pooria@www.speedtest.net:443
 trojan://Pooria@www.speedtest.net:80
 trojan://Q0Jqz6dchw@tunnel.vpns.fun:2053
 trojan://RlzoEILU@36.151.251.59:7815
+trojan://RlzoEILU@36.151.251.61:16641
+trojan://T@_WvT8Ho@LW%w_,@172.66.44.214:2053
 trojan://VZlHU01v6p@box.mtpmio.sbs:37024
 trojan://Watashi_VPN@104.17.147.22:443
 trojan://Watashi_VPN@104.17.148.22:443
 trojan://Watashi_VPN@104.18.26.94:8443
 trojan://ZFYOpKqD8uEClpZ2ya83cyCDalwSOYz3F3eCxnBD4eSXNSR5R0aAATj7I3x69g@18.163.249.175:443
 trojan://ZqS3Lxamkh@ru2.asc-sam.ir:2087
+trojan://a07cebde-351d-4ad3-8045-3cd0aa3f586c@mg7.gy6688.xyz:443
 trojan://a0f73320-1af3-11f0-a56a-1239d0255272@fr1.test3.net:443
 trojan://a591a9b0-2132-11f0-9930-1239d0255272@fr1.test3.net:443
 trojan://a6292090-afe1-4640-97a7-4f1d1d877cf1@hdfy8d1.cpi1.eu.org:443/
@@ -222,6 +230,7 @@ trojan://bpb-trojan@172.66.47.169:443
 trojan://bpb-trojan@185.176.24.2:443
 trojan://bpb-trojan@185.238.228.6:443
 trojan://bpb-trojan@23.227.60.8:443
+trojan://bpb-trojan@91.227.77.87:443
 trojan://bpb-trojan@[2606:4700:310c::ac42:2c57]:443
 trojan://bpb-trojan@bg.madison.eu.org:443
 trojan://bpb-trojan@digiclassor.ir:443
@@ -443,6 +452,7 @@ trojan://telegram-id-v2rayvpnchannel@63.178.27.177:22223
 trojan://telegram-id-v2rayvpnchannel@63.178.61.248:22223
 trojan://telegram-id-vlessconfig@3.127.213.136:22222
 trojan://telegram-id-vlessconfig@3.72.157.193:22222
+trojan://tg-fq521free@45.67.215.95:443
 trojan://trojan@104.26.13.31:8443/
 trojan://utF6JLQd2x@141.227.128.69:1935
 trojan://utF6JLQd2x@141.227.128.69:1935/
