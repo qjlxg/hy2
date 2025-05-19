@@ -71,9 +71,7 @@ trojan://5f5cbdd9cc@82.223.108.64:443
 trojan://61f7ce90-2132-11f0-ba75-1239d0255272@fr1.test3.net:443
 trojan://6206d21a-81a4-43f6-b88e-052637dce46d@103.234.53.27:50174
 trojan://63db084a-e2ce-46db-9dd6-d4ed2c3d2663@sg01.freeflyingcloud.xyz:35702
-trojan://6884d714-d3c4-4b49-aa20-767ea92837d6@192.0.54.184:443
 trojan://6884d714-d3c4-4b49-aa20-767ea92837d6@217.163.76.221:443
-trojan://6884d714-d3c4-4b49-aa20-767ea92837d6@217.163.76.254:443
 trojan://70017490-2132-11f0-bdf2-1239d0255272@fr1.test3.net:443
 trojan://74260716866785000@47.130.23.75:443
 trojan://77891e6750@27.0.232.204:443
@@ -95,7 +93,6 @@ trojan://971ff4bb-1f8e-4651-ad9d-5adfaf1647c4@bangalore.artunnel57.host:80
 trojan://98bae868-4f00-40e0-9603-8d848644ec44@1gzdx2.156786.xyz:37905
 trojan://9a358480-2132-11f0-bf3f-1239d0255272@fr1.test3.net:443
 trojan://9aa1e1569a@jp1.connecton.surf:443
-trojan://9e7caa3b-ca9c-40ba-9ea0-f0c992359239@104.21.86.140:443
 trojan://9eabd870-29cc-11f0-b0a3-1239d0255272@fr1.test3.net:443
 trojan://9yu6m5okr@production.tj.ojan.workers.dev:443
 trojan://AXpQXM4vNh@141.227.160.167:1935
@@ -166,7 +163,6 @@ trojan://dca7cc60-1234-11f0-8a3f-1239d0255272@fr1.test3.net:443
 trojan://dcc63659-8091-4afa-a598-af46ade91f94@uae.artunnel57.host:443
 trojan://dcc63659-8091-4afa-a598-af46ade91f94@uae.artunnel57.host:80
 trojan://de5a47b3e2@198.244.252.93:443
-trojan://def14a51-e0d9-11ec-8429-f23c91cfbbc9@4560c642-swin40-tjuq6l-wf62.cu.plebai.net:15229
 trojan://dns68@162.159.153.2:443
 trojan://e1c12e6f-a555-4ff8-b071-1e09dd5d91e6@t3.teslacdn2.live:443
 trojan://e4f288433b@54.36.173.159:443
@@ -198,6 +194,7 @@ trojan://redfree8@104.17.148.22:443
 trojan://redfree8@104.17.148.22:80
 trojan://telegram-id-directvpn@13.36.160.33:22223
 trojan://telegram-id-directvpn@13.37.76.52:22222
+trojan://telegram-id-directvpn@13.38.145.138:22223
 trojan://telegram-id-directvpn@13.39.152.74:22223
 trojan://telegram-id-directvpn@13.43.211.10:22222
 trojan://telegram-id-directvpn@13.60.153.19:22223
@@ -219,7 +216,6 @@ trojan://telegram-id-directvpn@3.78.101.232:22223
 trojan://telegram-id-directvpn@3.78.68.137:22223
 trojan://telegram-id-directvpn@3.79.131.235:22222
 trojan://telegram-id-directvpn@35.156.196.176:22223
-trojan://telegram-id-directvpn@35.157.5.33:22223
 trojan://telegram-id-directvpn@35.172.151.55:22222
 trojan://telegram-id-directvpn@35.181.19.90:22223
 trojan://telegram-id-directvpn@51.44.1.140:22223
@@ -231,6 +227,7 @@ trojan://telegram-id-directvpn@63.177.121.203:22222
 trojan://telegram-id-directvpn@63.178.27.177:22223
 trojan://telegram-id-privatevpns@13.36.121.210:22222
 trojan://telegram-id-privatevpns@13.36.160.33:22222
+trojan://telegram-id-privatevpns@13.38.145.138:22222
 trojan://telegram-id-privatevpns@13.39.152.74:22222
 trojan://telegram-id-privatevpns@13.42.217.95:22222
 trojan://telegram-id-privatevpns@13.48.81.193:22222
@@ -261,7 +258,6 @@ trojan://telegram-id-privatevpns@3.65.81.29:22222
 trojan://telegram-id-privatevpns@3.78.101.232:22222
 trojan://telegram-id-privatevpns@3.78.68.137:22222
 trojan://telegram-id-privatevpns@35.156.196.176:22222
-trojan://telegram-id-privatevpns@35.157.5.33:22222
 trojan://telegram-id-privatevpns@35.181.19.90:22222
 trojan://telegram-id-privatevpns@51.21.59.141:22222
 trojan://telegram-id-privatevpns@51.44.1.140:22222
@@ -275,5 +271,4 @@ trojan://utF6JLQd2x@141.227.128.69:1935
 trojan://wkmY1R4EcP@207.246.68.67:443
 trojan://wkmY1R4EcP@209.250.246.191:443
 trojan://wkmY1R4EcP@66.42.84.121:443
-trojan://xxoo@138.197.5.103:443
 trojan://ziIjOlyGbM@91.107.141.0:23825
