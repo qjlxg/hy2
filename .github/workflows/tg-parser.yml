@@ -30,7 +30,7 @@ jobs:
         path: ~/.cache/pip # pip 缓存的默认路径
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }} # 根据操作系统和 requirements.txt 文件内容生成缓存 key
         restore-keys: |
-           ${{ runner.os }}-pip-
+          ${{ runner.os }}-pip-
 
     - name: Install dependencies
       run: |
@@ -39,10 +39,12 @@ jobs:
 
     - name: Run TG Parser
       env:
+        
         THRD_PARS: '128' # 并发抓取线程数
-        PARS_DP: '10'    # 每个频道抓取页面深度
+        PARS_DP: '1'     # 每个频道抓取页面深度
         USE_INV_TC: 'n'  # 是否使用无效频道列表
       run: |
+        # 运行你的 Python 脚本
         python tg-parser.py
 
     - name: Configure Git
@@ -52,93 +54,9 @@ jobs:
 
     - name: Commit and push updated files
       run: |
-        # 拉取远程最新更改，避免冲突
-        git pull --rebase origin main
         # 添加所有可能被脚本修改的文件
         git add configtg.txt telegramchannels.json invalidtelegramchannels.json
         # 检查是否有实际更改，避免空提交
-        if git diff --staged --quiet; then
-          echo "TG 配置和频道列表没有实际更改，跳过提交。"
-        else
-          git commit -m "Update TG configs and channel lists"
-          # 推送更改到仓库
-          git push
-        fi
-        
-    - name: Convert mixed to base64
-      run: |
-        content=$(cat configtg.txt | base64| tr -d '\n')
-        echo "$content" > splitted/mixed
-
-    - name: Convert socks to base64
-      run: |
-        content=$(cat python/socks | base64| tr -d '\n')
-        echo "$content" > splitted/socks
-
-    - name: Convert ss to base64
-      run: |
-        content=$(cat python/ss | base64| tr -d '\n')
-        echo "$content" > splitted/ss
-
-    - name: Convert trojan to base64
-      run: |
-        content=$(cat python/trojan | base64| tr -d '\n')
-        echo "$content" > splitted/trojan
-
-    - name: Convert vless to base64
-      run: |
-        content=$(cat python/vless | base64| tr -d '\n')
-        echo "$content" > splitted/vless
-
-    - name: Convert vmess to base64
-      run: |
-        content=$(cat python/vmess | base64| tr -d '\n')
-        echo "$content" > splitted/vmess
-
-    - name: Convert tuic to base64
-      run: |
-        content=$(cat python/tuic | base64| tr -d '\n')
-        echo "$content" > splitted/tuic
-
-    - name: Convert hysteria2 to base64
-      run: |
-        content=$(cat python/hysteria2 | base64| tr -d '\n')
-        echo "$content" > splitted/hysteria2
-
-    - name: Convert hy2 to base64
-      run: |
-        content=$(cat python/hy2 | base64| tr -d '\n')
-        echo "$content" > splitted/hy2
-
-    - name: Convert hysteria to base64
-      run: |
-        content=$(cat python/hysteria | base64| tr -d '\n')
-        echo "$content" > splitted/hysteria
-
-    - name: Convert naive to base64
-      run: |
-        content=$(cat python/naive | base64| tr -d '\n')
-        echo "$content" > splitted/naive
-        
-    - name: Check for Base64 Changes
-      id: changes64 # 确保 ID 正确
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        # 将所有 splitted 目录下的文件添加到暂存区以检查变化
-        git add splitted/mixed splitted/*
-        if git diff --staged --quiet; then
-          echo "Base64 文件没有实际更改。"
-          echo "::set-output name=changed::false" # 明确设置输出为 false
-        else
-          echo "Base64 文件有更改。"
-          echo "::set-output name=changed::true"
-        fi
-        
-    - name: Commit and push Base64
-      # 根据上一步的输出判断是否执行
-      if: steps.changes64.outputs.changed == 'true'
-      run: |
-        # 文件已在上一阶段添加到暂存区
-        git commit -m "Update output files"
+        git diff --staged --quiet || git commit -m "Update TG configs and channel lists"
+        # 推送更改到仓库
         git push
