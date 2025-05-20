@@ -1,23 +1,62 @@
-name: Run TG Parser and Update Files
+name: Parse Channels, Split & Base64
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+
   workflow_dispatch: # 允许手动触发
   schedule:
-    # 每天运行，例如 UTC 时间凌晨 0 点
-    - cron: '0 0 * * *'
+    # 定时触发，每隔 6 小时运行一次
+    - cron: '0 */6 * * *'
 
 jobs:
-  run_parser_and_push:
+  run_python_and_push:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    # --- 添加原来 YAML 中的备份和归档相关步骤 ---
+    - name: Create timestamped directory
+      run: |
+        mkdir -p ./archives/$(date +'%Y%m')
+        mkdir -p ./archives/$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')
+        mkdir -p ./archives/channels/$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')
+        # 检查 splitted/mixed 文件是否存在再复制，避免因文件不存在而失败
+        if [ -f splitted/mixed ]; then
+          cp splitted/mixed ./archives/$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')/
+        else
+          echo "splitted/mixed not found, skipping copy to archive."
+        fi
+        # 检查 telegramchannels.json 文件是否存在再复制
+        if [ -f telegramchannels.json ]; then
+          cp telegramchannels.json ./archives/channels/$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')/
+        else
+          echo "telegramchannels.json not found, skipping copy to channel archive."
+        fi
+        # 原来的注释掉的部分保留，但默认不执行
+        # > configtg.txt
+        # cp archives/channels/telegramchannels.json ./
+        # Empty configtg and replace desired channels instead. Only activate when needed.
+
+    - name: Grab content and update backup
+      run: |
+        mkdir -p archives/latest_backup # 确保备份目录存在
+        curl https://github.com/qjlxg/hy2/raw/main/configtg.txt -o archives/latest_backup/mixed || echo "Failed to download configtg.txt backup, continuing." # 即使下载失败也继续
+
+    - name: Commit and push archived backups
+      run: |
+        git config --global user.name 'Github Action'
+        git config --global user.email 'Action@github.com'
+        git add archives/ # 添加 archives 目录下的所有更改
+        git commit -m "Archived backups" || echo "No changes to archive, skipping commit." # 如果没有变化则跳过提交
+        git push || echo "Failed to push archive changes, continuing." # 即使推送失败也继续
+
+
+    # --- 核心解析器步骤 (包含缓存) ---
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
@@ -47,16 +86,168 @@ jobs:
         # 运行你的 Python 脚本
         python tg-parser.py
 
-    - name: Configure Git
+    - name: Configure Git for Parser Push
       run: |
         git config --local user.name "GitHub Action"
         git config --local user.email "action@github.com"
 
-    - name: Commit and push updated files
+    - name: Commit and push parser updated files
       run: |
         # 添加所有可能被脚本修改的文件
         git add configtg.txt telegramchannels.json invalidtelegramchannels.json
         # 检查是否有实际更改，避免空提交
-        git diff --staged --quiet || git commit -m "Update TG configs and channel lists"
+        git diff --staged --quiet || git commit -m "Update TG configs and channel lists" || echo "No changes from parser, skipping commit." # 如果没有变化则跳过提交
         # 推送更改到仓库
-        git push
+        git push || echo "Failed to push parser changes, continuing." # 即使推送失败也继续
+
+    # --- 添加原来 YAML 中的分割和 Base64 编码相关步骤 ---
+    # 再次设置 Python 环境，如果 splitter.py 需要不同的依赖或环境，否则可以考虑合并到上面的 Python setup
+    - name: Set up Splitter Python Environment
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Split UTF-8 and update subscriptions
+      run: |
+        # 检查 splitter 脚本是否存在再运行
+        if [ -f python/splitter.py ]; then
+          python python/splitter.py
+        else
+          echo "python/splitter.py not found, skipping split."
+        fi
+
+    - name: Check for split changes
+      id: changes_split # 修改 ID 以避免冲突
+      run: |
+        # 检查 python/ 目录下分割后的文件是否有变化
+        git diff --quiet python/vmess python/vless python/trojan python/ss python/socks python/hysteria2 python/hy2 python/tuic python/hysteria python/naive || echo "::set-output name=changed::true"
+
+    - name: Commit and push splitted files
+      if: steps.changes_split.outputs.changed == 'true' # 根据新的 ID 判断
+      run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          # 添加分割后的文件 (确保路径和文件名正确)
+          git add python/vmess python/vless python/trojan python/ss python/socks python/hysteria2 python/hy2 python/tuic python/hysteria python/naive
+          git commit -am "Update v2ray subscriptions"
+          git push || echo "Failed to push splitted files, continuing." # 即使推送失败也继续
+
+    # --- Base64 编码步骤 ---
+    # 确保 splitted 目录存在
+    - name: Create splitted directory
+      run: mkdir -p splitted
+
+    - name: Convert mixed to base64
+      run: |
+        if [ -f configtg.txt ]; then
+          content=$(cat configtg.txt | base64 | tr -d '\n')
+          echo "$content" > splitted/mixed
+        else
+          echo "configtg.txt not found, skipping base64 conversion for mixed."
+        fi
+
+    - name: Convert socks to base64
+      run: |
+        if [ -f python/socks ]; then
+          content=$(cat python/socks | base64 | tr -d '\n')
+          echo "$content" > splitted/socks
+        else
+          echo "python/socks not found, skipping base64 conversion for socks."
+        fi
+
+    - name: Convert ss to base64
+      run: |
+        if [ -f python/ss ]; then
+          content=$(cat python/ss | base64 | tr -d '\n')
+          echo "$content" > splitted/ss
+        else
+          echo "python/ss not found, skipping base64 conversion for ss."
+        fi
+
+    - name: Convert trojan to base64
+      run: |
+        if [ -f python/trojan ]; then
+          content=$(cat python/trojan | base64 | tr -d '\n')
+          echo "$content" > splitted/trojan
+        else
+          echo "python/trojan not found, skipping base64 conversion for trojan."
+        fi
+
+    - name: Convert vless to base64
+      run: |
+        if [ -f python/vless ]; then
+          content=$(cat python/vless | base64 | tr -d '\n')
+          echo "$content" > splitted/vless
+        else
+          echo "python/vless not found, skipping base64 conversion for vless."
+        fi
+
+    - name: Convert vmess to base64
+      run: |
+        if [ -f python/vmess ]; then
+          content=$(cat python/vmess | base64 | tr -d '\n')
+          echo "$content" > splitted/vmess
+        else
+          echo "python/vmess not found, skipping base64 conversion for vmess."
+        fi
+
+    - name: Convert tuic to base64
+      run: |
+        if [ -f python/tuic ]; then
+          content=$(cat python/tuic | base64 | tr -d '\n')
+          echo "$content" > splitted/tuic
+        else
+          echo "python/tuic not found, skipping base64 conversion for tuic."
+        fi
+
+    - name: Convert hysteria2 to base64
+      run: |
+        if [ -f python/hysteria2 ]; then
+          content=$(cat python/hysteria2 | base64 | tr -d '\n')
+          echo "$content" > splitted/hysteria2
+        else
+          echo "python/hysteria2 not found, skipping base64 conversion for hysteria2."
+        fi
+
+    - name: Convert hy2 to base64
+      run: |
+        if [ -f python/hy2 ]; then
+          content=$(cat python/hy2 | base64 | tr -d '\n')
+          echo "$content" > splitted/hy2
+        else
+          echo "python/hy2 not found, skipping base64 conversion for hy2."
+        fi
+
+    - name: Convert hysteria to base64
+      run: |
+        if [ -f python/hysteria ]; then
+          content=$(cat python/hysteria | base64 | tr -d '\n')
+          echo "$content" > splitted/hysteria
+        else
+          echo "python/hysteria not found, skipping base64 conversion for hysteria."
+        fi
+
+    - name: Convert naive to base64
+      run: |
+        if [ -f python/naive ]; then
+          content=$(cat python/naive | base64 | tr -d '\n')
+          echo "$content" > splitted/naive
+        else
+          echo "python/naive not found, skipping base64 conversion for naive."
+        fi
+
+    - name: Check for Base64 Changes
+      id: changes64 # 修改 ID 以避免冲突
+      run: |
+        # 检查 splitted/ 目录下文件是否有变化
+        git diff --quiet splitted/mixed splitted/socks splitted/ss splitted/trojan splitted/vless splitted/vmess splitted/tuic splitted/hysteria2 splitted/hy2 splitted/hysteria splitted/naive || echo "::set-output name=changed::true"
+
+    - name: Commit and push Base64 files
+      if: steps.changes64.outputs.changed == 'true' # 根据新的 ID 判断
+      run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add splitted/mixed
+          git add splitted/* # 添加 splitted/ 目录下所有文件
+          git commit --allow-empty -m "Update output files" # 提交更改，允许空提交（如果没有变化）
+          git push || echo "Failed to push Base64 changes, continuing." # 即使推送失败也继续
