@@ -56,10 +56,7 @@ def clean_and_urldecode(raw_string):
 
     cleaned = raw_string.strip()
     cleaned = re.sub(r'amp;', '', cleaned)
-    # Note: The original code had 'cleaned = re.sub(r'', '', cleaned)', which is likely a typo and does nothing.
-    # Assuming it's intended to remove empty matches, which is redundant, or was meant for something else.
-    # Keeping it as is based on your original code, but be aware it might not be useful.
-    cleaned = re.sub(r'', '', cleaned)
+    cleaned = re.sub(r'', '', cleaned) # This line still seems redundant/typo, but kept as per original.
     cleaned = re.sub(r'%0A', '', cleaned)
     cleaned = re.sub(r'%250A', '', cleaned)
     cleaned = re.sub(r'%0D', '', cleaned)
@@ -112,8 +109,8 @@ def parse_and_canonicalize(link_string):
             decoded_payload = base64.b64decode(b64_payload).decode("utf-8", errors='replace')
             scheme_specific_part = 'ssr://' + decoded_payload
         except Exception as e:
-             logging.debug(f"SSR Base64 解码失败: {link_without_fragment[:50]}... Error: {e}")
-             return None
+            logging.debug(f"SSR Base64 解码失败: {link_without_fragment[:50]}... Error: {e}")
+            return None
 
     elif '://' in link_without_fragment:
         try:
@@ -128,81 +125,81 @@ def parse_and_canonicalize(link_string):
         userinfo = parsed.username
 
         if not scheme or not host or not port:
-             logging.debug(f"链接缺少必需组件 (协议/主机/端口): {link_without_fragment[:50]}...")
-             return None
+            logging.debug(f"链接缺少必需组件 (协议/主机/端口): {link_without_fragment[:50]}...")
+            return None
 
         canonical_netloc = f"{host}:{port}"
         canonical_id = None
 
         if scheme in ['vmess']:
-             try:
-                 payload = json.loads(parsed.path if parsed.path else '{}')
-                 vmess_id = payload.get('id')
-                 if vmess_id:
-                     canonical_id = f"{scheme}://{vmess_id}@{canonical_netloc}"
-             except json.JSONDecodeError:
-                 logging.debug(f"VMess 解码后内容不是有效的 JSON: {scheme_specific_part}")
-                 return None
-             except Exception as e:
-                 logging.debug(f"解析 VMess JSON 错误: {e}")
-                 return None
+            try:
+                payload = json.loads(parsed.path if parsed.path else '{}')
+                vmess_id = payload.get('id')
+                if vmess_id:
+                    canonical_id = f"{scheme}://{vmess_id}@{canonical_netloc}"
+            except json.JSONDecodeError:
+                logging.debug(f"VMess 解码后内容不是有效的 JSON: {scheme_specific_part}")
+                return None
+            except Exception as e:
+                logging.debug(f"解析 VMess JSON 错误: {e}")
+                return None
 
         elif scheme in ['vless', 'trojan', 'juicity']:
-             if userinfo:
-                 canonical_id = f"{scheme}://{userinfo}@{canonical_netloc}"
-             elif scheme == 'trojan':
-                 canonical_id = f"{scheme}://{canonical_netloc}"
-             elif scheme == 'vless' and parsed.path and parsed.path.strip('/') != '':
-                 vless_id_from_path = parsed.path.strip('/')
-                 canonical_id = f"{scheme}://{vless_id_from_path}@{canonical_netloc}"
-             else:
-                 logging.debug(f"{scheme.upper()} 链接缺少用户信息或 ID: {link_without_fragment[:50]}...")
-                 return None
+            if userinfo:
+                canonical_id = f"{scheme}://{userinfo}@{canonical_netloc}"
+            elif scheme == 'trojan':
+                canonical_id = f"{scheme}://{canonical_netloc}"
+            elif scheme == 'vless' and parsed.path and parsed.path.strip('/') != '':
+                vless_id_from_path = parsed.path.strip('/')
+                canonical_id = f"{scheme}://{vless_id_from_path}@{canonical_netloc}"
+            else:
+                logging.debug(f"{scheme.upper()} 链接缺少用户信息或 ID: {link_without_fragment[:50]}...")
+                return None
 
         elif scheme in ['ss']:
             if userinfo:
                 try:
                     userinfo_decoded = base64.b64decode(userinfo + '=' * (-len(userinfo) % 4)).decode("utf-8", errors='replace')
                     if ':' in userinfo_decoded:
-                         method, password = userinfo_decoded.split(':', 1)
-                         canonical_id = f"{scheme}://{method}:{password}@{canonical_netloc}"
+                        method, password = userinfo_decoded.split(':', 1)
+                        canonical_id = f"{scheme}://{method}:{password}@{canonical_netloc}"
                     else:
-                         logging.debug(f"SS userinfo 解码后不是 method:password 格式: {userinfo_decoded}")
-                         return None
+                        logging.debug(f"SS userinfo 解码后不是 method:password 格式: {userinfo_decoded}")
+                        return None
                 except Exception as e:
-                     logging.debug(f"SS userinfo Base64 解码失败: {userinfo[:50]}... Error: {e}")
-                     return None
+                    logging.debug(f"SS userinfo Base64 解码失败: {userinfo[:50]}... Error: {e}")
+                    return None
             elif parsed.path and parsed.path.strip() != '':
-                     logging.debug(f"SS 链接格式异常 (有 Path 无 userinfo?): {link_without_fragment[:50]}...")
-                     return None
+                logging.debug(f"SS 链接格式异常 (有 Path 无 userinfo?): {link_without_fragment[:50]}...")
+                return None
             else:
-               logging.debug(f"SS 链接缺少用户信息: {link_without_fragment[:50]}...")
-               return None
+                logging.debug(f"SS 链接缺少用户信息: {link_without_fragment[:50]}...")
+                return None
 
         elif scheme in ['hysteria', 'hysteria2', 'hy2', 'socks', 'socks4', 'socks5', 'naive+']:
-             canonical_id = f"{scheme}://{canonical_netloc}"
-             if userinfo:
-                 canonical_id = f"{scheme}://{userinfo}@{canonical_netloc}"
-             if scheme == 'naive+':
-                 if cleaned_decoded_link.startswith('naive+http://'):
+            canonical_id = f"{scheme}://{canonical_netloc}"
+            if userinfo:
+                canonical_id = f"{scheme}://{userinfo}@{canonical_netloc}"
+            if scheme == 'naive+':
+                if cleaned_decoded_link.startswith('naive+http://'):
                         canonical_id = f"naive+http://{canonical_netloc}"
                         if userinfo: canonical_id = f"naive+http://{userinfo}@{canonical_netloc}"
-                 elif cleaned_decoded_link.startswith('naive+https://'):
+                elif cleaned_decoded_link.startswith('naive+https://'):
                         canonical_id = f"naive+https://{canonical_netloc}"
                         if userinfo: canonical_id = f"naive+https://{userinfo}@{canonical_netloc}"
-                 else:
+                else:
                         logging.debug(f"Naive+ 链接格式异常 (非 http/https): {link_without_fragment[:50]}...")
                         return None
 
         else:
-             logging.debug(f"不支持或未知协议: {scheme} - {link_without_fragment[:50]}...")
-             return None
+            logging.debug(f"不支持或未知协议: {scheme} - {link_without_fragment[:50]}...")
+            return None
 
         if canonical_id:
-             return (canonical_id.lower(), cleaned_decoded_link)
+            return (canonical_id.lower(), cleaned_decoded_link)
         else:
-             logging.debug(f"未能为协议 {scheme} 生成规范化 ID: {link_without_fragment[:50]}...")
-             return None
+            logging.debug(f"未能为协议 {scheme} 生成规范化 ID: {link_without_fragment[:50]}...")
+            return None
 
     except Exception as e:
         logging.debug(f"解析或规范化链接时发生错误 '{link_string[:50]}...': {e}")
@@ -232,17 +229,17 @@ def process(i_url):
                     if match:
                         last_datbef = [match.group(1)]
                     else:
-                         last_datbef = None # If no match, stop trying to paginate
+                        last_datbef = None # If no match, stop trying to paginate
                     break
                 except requests.exceptions.RequestException as e:
                     logging.warning(f"获取 {page_url} 失败 (重试): {e}")
                     time.sleep(random.uniform(5, 15))
             
             if not html_pages or (itter > 1 and not last_datbef):
-                 # If first page failed or subsequent pages have no 'data-before', break
-                 if itter == 1 and not html_pages:
-                      logging.warning(f"未能获取频道 {i_url} 的第一页。")
-                 break
+                # If first page failed or subsequent pages have no 'data-before', break
+                if itter == 1 and not html_pages:
+                    logging.warning(f"未能获取频道 {i_url} 的第一页。")
+                break
 
 
         for page in html_pages:
@@ -252,22 +249,22 @@ def process(i_url):
 
 
             for code_tag in code_tags:
-                 # Extract text including line breaks from the tag and its descendants
+                # Extract text including line breaks from the tag and its descendants
                 potential_links = code_tag.get_text(separator='\n').split('\n')
 
 
                 for raw_link in potential_links:
-                     # Use a compiled regex for efficiency and handle case-insensitively
+                    # Use a compiled regex for efficiency and handle case-insensitively
                     if re.search(r"(vmess|vless|ss|trojan|tuic|hysteria|hysteria2|hy2|juicity|nekoray|socks4|socks5|socks|naive\+):\/", raw_link, re.IGNORECASE):
                         with data_lock:
                             all_potential_links_data.append((raw_link, i_url))
                         found_links_in_channel = True
 
         if found_links_in_channel:
-             # This block doesn't do anything, maybe it was intended for logging or tracking?
-             # Keeping it as is based on your original code.
-             with data_lock:
-                 pass
+            # This block doesn't do anything, maybe it was intended for logging or tracking?
+            # Keeping it as is based on your original code.
+            with data_lock:
+                pass
 
 
     except Exception as e:
@@ -332,14 +329,14 @@ for config in config_all:
             if cleaned_config.startswith('vmess://'):
                 b64_part = cleaned_config[8:]
             elif cleaned_config.startswith('ssr://'):
-                 b64_part = cleaned_config[6:]
+                b64_part = cleaned_config[6:]
             elif cleaned_config.startswith('ss://'):
-                 # For SS, the userinfo part is Base64 encoded
-                 parsed_ss = urlparse(cleaned_config)
-                 b64_part = parsed_ss.username if parsed_ss.username else ''
-                 # Continue to the next iteration if there's no userinfo in SS
-                 if not b64_part:
-                     continue
+                # For SS, the userinfo part is Base64 encoded
+                parsed_ss = urlparse(cleaned_config)
+                b64_part = parsed_ss.username if parsed_ss.username else ''
+                # Continue to the next iteration if there's no userinfo in SS
+                if not b64_part:
+                    continue
 
             # Add padding and decode
             b64_part += '=' * (-len(b64_part) % 4)
@@ -351,20 +348,20 @@ for config in config_all:
                 # Basic cleanup for extracted names
                 cleaned_name = match.lower().strip('_')
                 if len(cleaned_name) >= 5:
-                     extracted_tg_names.add(cleaned_name)
+                    extracted_tg_names.add(cleaned_name)
 
         except Exception as e:
-             # Changed logging level to debug as this is a common occurrence for non-channel configs
-             logging.debug(f"从 Base64 解码配置中提取频道名失败或非预期格式: {e}")
+            # Changed logging level to debug as this is a common occurrence for non-channel configs
+            logging.debug(f"从 Base64 解码配置中提取频道名失败或非预期格式: {e}")
 
 
     # Also search for channel names directly in the cleaned config string
     matches = pattern_telegram_user.findall(cleaned_config)
     for match in matches:
-         # Basic cleanup for extracted names
+        # Basic cleanup for extracted names
         cleaned_name = match.lower().strip('_')
         if len(cleaned_name) >= 5:
-             extracted_tg_names.add(cleaned_name)
+            extracted_tg_names.add(cleaned_name)
 
 
 extracted_tg_names = {name for name in extracted_tg_names if len(name) >= 5}
@@ -427,7 +424,8 @@ print(f'最终去重后得到 {len(processed_codes_list)} 条有效配置。')
 print(f'\n更新频道列表文件...')
 
 new_tg_name_json = sorted(list(channels_that_worked))
-inv_tg_name_json = sorted(list(set(tg_name_json) - channels_that_worked).union(inv_tg_name_json))
+# 修正了这一行：将 inv_tg_name_json 也转换为集合，然后再执行 union 操作
+inv_tg_name_json = sorted(list((set(tg_name_json) - channels_that_worked).union(set(inv_tg_name_json))))
 inv_tg_name_json = [x for x in inv_tg_name_json if isinstance(x, str) and len(x) >= 5]
 
 json_dump(new_tg_name_json, TG_CHANNELS_FILE)
