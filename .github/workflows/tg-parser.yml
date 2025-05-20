@@ -80,7 +80,7 @@ jobs:
       env:
         
         THRD_PARS: '128' # 并发抓取线程数
-        PARS_DP: '1'     # 每个频道抓取页面深度
+        PARS_DP: '50'     # 每个频道抓取页面深度
         USE_INV_TC: 'n'  # 是否使用无效频道列表
       run: |
         # 运行你的 Python 脚本
