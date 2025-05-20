@@ -23,13 +23,7 @@ jobs:
       with:
         python-version: '3.x' # 使用最新的 Python 3 版本
         
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip # pip 缓存的默认路径
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }} # 根据操作系统和 requirements.txt 文件内容生成缓存 key
-        restore-keys: |
-          ${{ runner.os }}-pip-
+
           
     - name: Install dependencies
       run: |
