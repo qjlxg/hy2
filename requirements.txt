@@ -16,3 +16,4 @@ snscrape
 soupsieve
 urllib3
 Werkzeug
+pyyaml
