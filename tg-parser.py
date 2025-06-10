@@ -6,11 +6,14 @@ import time
 import random
 import re
 import base64
+import yaml
 from bs4 import BeautifulSoup
 from datetime import datetime
 from urllib.parse import urlparse, parse_qs, urlencode, quote
 import logging
 from concurrent.futures import ThreadPoolExecutor
+import hashlib
+import uuid  # Added for UUID validation
 
 # 禁用不安全请求警告
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
@@ -19,25 +22,26 @@ requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.
 os.system('cls' if os.name == 'nt' else 'clear')
 
 # --- 配置文件 ---
-CONFIG_TG_FILE = 'configtg.txt'
+CONFIG_TG_TXT_FILE = 'configtg.txt'
+CONFIG_TG_YAML_FILE = 'configtg.yaml'
 TG_CHANNELS_FILE = 'telegramchannels.json'
 INV_TG_CHANNELS_FILE = 'invalidtelegramchannels.json'
 
 # --- 全局数据和锁 ---
 all_potential_links_data = []
 data_lock = threading.Lock()
-sem_pars = None  # 稍后根据 THRD_PARS 初始化信号量
+sem_pars = None
 
-# --- 用户代理列表（扩展） ---
+# --- 用户代理列表 ---
 USER_AGENTS = [
-    # 桌面浏览器
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
-    # 移动浏览器
     'Mozilla/5.0 (Linux; Android 10; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36',
-    'Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/604.1',
 ]
+
+# --- 非关键查询参数（用于去重） ---
+NON_CRITICAL_QUERY_PARAMS = {'ed', 'fp', 'alpn', 'allowInsecure'}  # 新增：忽略这些参数以减少重复
 
 # --- 辅助函数 ---
 
@@ -81,6 +85,15 @@ def write_lines(data, path):
     except Exception as e:
         logging.error(f"保存文件 {path} 时发生错误: {e}")
 
+def yaml_dump(data, path):
+    """保存 YAML 数据到文件"""
+    try:
+        with open(path, 'w', encoding="utf-8") as file:
+            yaml.dump(data, file, allow_unicode=True, sort_keys=False)
+        logging.info(f"成功保存文件 {path}。")
+    except Exception as e:
+        logging.error(f"保存文件 {path} 时发生错误: {e}")
+
 def clean_and_urldecode(raw_string):
     """清理并解码 URL 字符串"""
     if not isinstance(raw_string, str):
@@ -91,7 +104,7 @@ def clean_and_urldecode(raw_string):
     cleaned = re.sub(r'%0A|%250A|%0D|\\n', '', cleaned, flags=re.IGNORECASE)
 
     decoded = cleaned
-    max_decode_attempts = 5  # 防止无限循环
+    max_decode_attempts = 5
     for _ in range(max_decode_attempts):
         try:
             new_decoded = requests.utils.unquote(decoded)
@@ -121,6 +134,28 @@ def is_valid_link(parsed_url):
 
     return True
 
+def is_uuid(s):
+    """检查字符串是否为有效的 UUID"""
+    try:
+        uuid.UUID(s)
+        return True
+    except ValueError:
+        return False
+
+def normalize_path(path):
+    """规范化路径，移除重复的频道名称"""
+    if not path:
+        return ''
+    # 移除重复的 @ZEDMODEON 等模式
+    path = re.sub(r'(@\w+)(?:-\1)+', r'\1', path, flags=re.IGNORECASE)
+    path = re.sub(r'(\b\w+\b)(?:-\1)+', r'\1', path, flags=re.IGNORECASE)
+    return path.strip('/')
+
+def generate_node_name(canonical_id, scheme, host, port):
+    """生成标准化的节点名称，基于简化后的关键字段"""
+    simplified_key = f"{scheme}://{host}:{port}"
+    return hashlib.md5(simplified_key.encode('utf-8')).hexdigest()[:8]
+
 def parse_and_canonicalize(link_string):
     """解析、清理、解码并规范化代理链接"""
     if not link_string or not isinstance(link_string, str):
@@ -133,12 +168,12 @@ def parse_and_canonicalize(link_string):
         return None
 
     link_without_fragment = cleaned_decoded_link.split('#', 1)[0]
+    original_remark = cleaned_decoded_link.split('#', 1)[1] if '#' in cleaned_decoded_link else ''
     scheme = ''
     parsed_payload_for_urlparse = link_without_fragment
     vmess_json_payload = None
     ssr_decoded_parts = None
 
-    # 处理 Base64 编码的协议（VMess 和 SSR）
     if link_without_fragment.startswith('vmess://'):
         scheme = 'vmess'
         try:
@@ -173,11 +208,11 @@ def parse_and_canonicalize(link_string):
                 logging.debug(f"SSR Base64 解码内容格式不符: {decoded_payload_str[:50]}...")
                 return None
         except Exception as e:
-            logging.debug(f"SSR Base64 解码失败或解析错误: {link_without_fragment[:50]}... 错误: {e}")
+            logging.debug(f"SSR Base64 解码失败或解析错误: {link_without_fragment[:50]}...")
             return None
 
     elif '://' in link_without_fragment:
-        scheme = link_without_fragment.split('://', 1)[0].lower()
+        scheme = link_without_fragment.split('://')[0].lower()
     else:
         logging.debug(f"链接不包含协议: {link_without_fragment[:50]}...")
         return None
@@ -188,18 +223,19 @@ def parse_and_canonicalize(link_string):
             logging.debug(f"链接基本验证失败: {link_without_fragment[:50]}...")
             return None
 
-        host = parsed.hostname.lower() if parsed.hostname else ''
+        host = parsed.hostname.lower()
         port = parsed.port
         userinfo = parsed.username
 
         if not scheme or not host or not port:
-            logging.debug(f"链接缺少必需组件: {link_without_fragment[:50]}...")
+            logging.debug(f"链接缺少必需组件: {link_without_fragment}")
             return None
 
         canonical_id_components = [scheme]
-
-        if scheme == 'ss':
-            if userinfo:
+        # 新增：根据环境变量决定是否忽略 userinfo
+        ignore_userinfo = os.getenv('IGNORE_USERINFO', 'false').lower() == 'true' and is_uuid(userinfo)
+        if userinfo and not ignore_userinfo:
+            if scheme == 'ss':
                 try:
                     userinfo_decoded = base64.b64decode(userinfo + '=' * (-len(userinfo) % 4)).decode("utf-8", errors='replace')
                     if ':' in userinfo_decoded:
@@ -212,37 +248,36 @@ def parse_and_canonicalize(link_string):
                     logging.debug(f"SS userinfo Base64 解码失败: {userinfo[:50]}... 错误: {e}")
                     return None
             else:
-                logging.debug(f"SS 链接缺少用户信息: {link_without_fragment[:50]}...")
-                return None
-        elif userinfo:
-            canonical_id_components.append(userinfo)
+                canonical_id_components.append(userinfo)
+        else:
+            logging.debug(f"忽略 userinfo 用于去重: {userinfo}")
 
         canonical_id_components.append(f"{host}:{port}")
 
-        canonical_path = parsed.path.strip('/')
+        canonical_path = normalize_path(parsed.path)  # 规范化路径
         if canonical_path:
-            canonical_id_components.append(f"path={quote(canonical_path, safe='')}")
+            canonical_id_components.append(f"path={quote(canonical_path)}")
 
         query_params = parse_qs(parsed.query, keep_blank_values=True)
         canonical_query_list = []
         for key in sorted(query_params.keys()):
-            for value in sorted(query_params[key]):
-                canonical_query_list.append(f"{quote(key.lower(), safe='')}={quote(value.lower(), safe='')}")
+            if key.lower() not in NON_CRITICAL_QUERY_PARAMS:  # 忽略非关键参数
+                for value in sorted(query_params[key]):
+                    canonical_query_list.append(f"{quote(key.lower())}={quote(value)}")
         if canonical_query_list:
             canonical_id_components.append(f"query={';'.join(canonical_query_list)}")
 
-        # 优化 VMess 规范化
         if scheme == 'vmess' and vmess_json_payload:
-            vmess_fields = ['id', 'aid', 'net', 'type', 'host', 'path', 'tls', 'sni', 'fp', 'v', 'add', 'port', 'ps', 'alpn']
-            vmess_canonical_parts = []
-            for field in sorted(vmess_fields):
+            vmess_fields = ['id', 'aid', 'net', 'type', 'host', 'path', 'tls', 'sni', 'v', 'add', 'port']
+            vmess_params = {}
+            for field in vmess_fields:
                 value = vmess_json_payload.get(field)
                 if value is not None and value != '':
-                    vmess_canonical_parts.append(f"{field}={quote(str(value).lower(), safe='')}")
-            if vmess_canonical_parts:
+                    vmess_params[field] = str(value).lower()
+            if vmess_params:
+                vmess_canonical_parts = [f"{k}={quote(v)}" for k, v in sorted(vmess_params.items())]
                 canonical_id_components.append(f"vmess_params={';'.join(vmess_canonical_parts)}")
 
-        # 优化 SSR 规范化
         if scheme == 'ssr' and ssr_decoded_parts:
             try:
                 ssr_protocol = ssr_decoded_parts[2]
@@ -250,34 +285,47 @@ def parse_and_canonicalize(link_string):
                 ssr_obfs = ssr_decoded_parts[4]
                 password_part_with_query = ssr_decoded_parts[5]
                 actual_password_b64 = password_part_with_query.split('/?')[0]
-                password_canonical = base64.b64decode(actual_password_b64 + '=' * (-len(actual_password_b64) % 4)).decode("utf-8", errors='replace')
+                password = base64.b64decode(actual_password_b64 + '=' * (-len(actual_password_b64) % 4)).decode("utf-8", errors='replace')
                 
-                ssr_specific_parts = [
-                    f"protocol={quote(ssr_protocol.lower(), safe='')}",
-                    f"method={quote(ssr_method.lower(), safe='')}",
-                    f"obfs={quote(ssr_obfs.lower(), safe='')}",
-                    f"password={quote(password_canonical.lower(), safe='')}"
-                ]
-
-                ssr_custom_query_str = ''
+                ssr_params = {
+                    'protocol': ssr_protocol.lower(),
+                    'method': ssr_method.lower(),
+                    'obfs': ssr_obfs.lower(),
+                    'password': password.lower()
+                }
+                ssr_custom_query_str = '' 
                 if '/?' in decoded_payload_str:
-                    ssr_custom_query_str = decoded_payload_str.split('/?', 1)[1]
-                ssr_custom_params = parse_qs(ssr_custom_query_str, keep_blank_values=True)
-                ssr_canonical_custom_list = []
-                for key in sorted(ssr_custom_params.keys()):
-                    for value in sorted(ssr_custom_params[key]):
-                        ssr_canonical_custom_list.append(f"{quote(key.lower(), safe='')}={quote(value.lower(), safe='')}")
-                if ssr_canonical_custom_list:
-                    ssr_specific_parts.append(f"custom_query={';'.join(ssr_canonical_custom_list)}")
-
-                canonical_id_components.append(f"ssr_params={';'.join(ssr_specific_parts)}")
+                    ssr_custom_query = decoded_payload_str.split('/?', 1)[1]
+                    ssr_custom_params = parse_qs(ssr_custom_query_str, keep_blank_values=True)
+                    for key in sorted(ssr_custom_params.keys()):
+                        for value in sorted(ssr_custom_params[key]):
+                            if key.lower() not in NON_CRITICAL_QUERY_PARAMS:
+                                ssr_params[key.lower()] = value
+                ssr_canonical_parts = [f"{k}={quote(v)}" for k, v in sorted(ssr_params.items())]
+                canonical_id_components.append(f"ssr_params={';'.join(ssr_canonical_parts)}")
             except Exception as e:
                 logging.debug(f"SSR 规范化失败: {e}")
                 return None
 
         canonical_id = "###".join(canonical_id_components).lower()
+        simplified_canonical_id = canonical_id.replace(f"{userinfo}###", "") if ignore_userinfo else canonical_id
         if canonical_id:
-            return (canonical_id, cleaned_decoded_link)
+            node_name = generate_node_name(simplified_canonical_id, scheme, host, port)
+            return {
+                'canonical_id': canonical_id,
+                'simplified_canonical_id': simplified_canonical_id,
+                'link': cleaned_decoded_link,
+                'scheme': scheme,
+                'host': host,
+                'port': port,
+                'userinfo': userinfo,
+                'path': canonical_path,
+                'query': query_params,
+                'vmess_params': vmess_params if scheme == 'vmess' else None,
+                'ssr_params': ssr_params if scheme == 'ssr' else None,
+                'remark': original_remark,
+                'node_name': node_name
+            }
         else:
             logging.debug(f"未能生成规范化 ID: {link_without_fragment[:50]}...")
             return None
@@ -286,8 +334,6 @@ def parse_and_canonicalize(link_string):
         logging.error(f"解析或规范化链接错误: {link_string[:50]}... 错误: {e}")
         return None
 
-# --- 去重处理（并行化） ---
-
 def process_link(link_data):
     """处理单个链接并返回规范化结果"""
     raw_link, channel_name = link_data
@@ -295,8 +341,6 @@ def process_link(link_data):
     if result:
         return result, channel_name
     return None, channel_name
-
-# --- 主处理函数 ---
 
 def process(i_url):
     """处理单个 Telegram 频道以提取代理链接"""
@@ -366,8 +410,6 @@ def process(i_url):
         sem_pars.release()
         logging.info(f"完成处理频道: {i_url}")
 
-# --- 主执行逻辑 ---
-
 if __name__ == "__main__":
     # 配置日志
     log_level_str = os.getenv('LOG_LEVEL', 'INFO').upper()
@@ -378,7 +420,6 @@ if __name__ == "__main__":
     tg_name_json = json_load(TG_CHANNELS_FILE)
     inv_tg_name_json = json_load(INV_TG_CHANNELS_FILE)
 
-    # 过滤无效频道名
     inv_tg_name_json = [x for x in inv_tg_name_json if isinstance(x, str) and len(x) >= 5]
     tg_name_json = [x for x in tg_name_json if isinstance(x, str) and len(x) >= 5]
     inv_tg_name_json = list(set(inv_tg_name_json) - set(tg_name_json))
@@ -394,20 +435,21 @@ if __name__ == "__main__":
     logging.info(f'  每个频道抓取页面深度 (PARS_DP) = {pars_dp}')
     logging.info(f'  使用无效频道列表 (USE_INV_TC) = {use_inv_tc}')
     logging.info(f'  日志级别 (LOG_LEVEL) = {logging.getLevelName(log_level)}')
+    logging.info(f'  忽略 userinfo 去重 (IGNORE_USERINFO) = {os.getenv("IGNORE_USERINFO", "false")}')
 
     logging.info(f'\n现有频道统计:')
     logging.info(f'  {TG_CHANNELS_FILE} 中的频道总数 - {len(tg_name_json)}')
     logging.info(f'  {INV_TG_CHANNELS_FILE} 中的频道总数 - {len(inv_tg_name_json)}')
 
-    logging.info(f'\n从 {CONFIG_TG_FILE} 中提取新的 TG 频道名...')
+    logging.info(f'\n从 {CONFIG_TG_TXT_FILE} 中提取新的 TG 频道名...')
     config_all = []
-    if os.path.exists(CONFIG_TG_FILE):
+    if os.path.exists(CONFIG_TG_TXT_FILE):
         try:
-            with open(CONFIG_TG_FILE, "r", encoding="utf-8") as config_all_file:
+            with open(CONFIG_TG_TXT_FILE, "r", encoding="utf-8") as config_all_file:
                 config_all = config_all_file.readlines()
-            logging.info(f"成功读取 {CONFIG_TG_FILE}。")
+            logging.info(f"成功读取 {CONFIG_TG_TXT_FILE}。")
         except Exception as e:
-            logging.error(f"读取 {CONFIG_TG_FILE} 失败: {e}")
+            logging.error(f"读取 {CONFIG_TG_TXT_FILE} 失败: {e}")
 
     pattern_telegram_user = re.compile(r'(?:https?:\/\/t\.me\/|@|%40|\bt\.me\/)([a-zA-Z0-9_]{5,})', re.IGNORECASE)
     extracted_tg_names = set()
@@ -469,7 +511,7 @@ if __name__ == "__main__":
                 logging.debug(f"从配置提取频道名: {cleaned_name}")
 
     initial_tg_count = len(tg_name_json)
-    tg_name_json = sorted(list(set(tg_name_json).union(extracted_tg_names)))
+    tg_name_json = sorted(list(set(tg_name_json.union(extracted_tg_names)))
 
     logging.info(f'  更新后 {TG_CHANNELS_FILE} 频道总数: {len(tg_name_json)} (新增 {len(tg_name_json) - initial_tg_count})')
 
@@ -481,7 +523,7 @@ if __name__ == "__main__":
     channels_to_process = tg_name_json
     if use_inv_tc:
         channels_to_process = sorted(list(set(tg_name_json).union(inv_tg_name_json)))
-        logging.info(f'  处理 {len(channels_to_process)} 个频道（包含无效列表）。')
+        logging.info(f'  处理 {len(channels_to_process)} 个频道（包含无效频道）。')
     else:
         logging.info(f'  处理 {len(channels_to_process)} 个有效频道。')
 
@@ -495,7 +537,7 @@ if __name__ == "__main__":
         thread.join()
 
     end_time_parsing = datetime.now()
-    logging.info(f'\n爬取完成 - 耗时 {str(end_time_parsing - start_time).split(".")[0]}')
+    logging.info(f'\n爬取完成 - 耗时 {str(end_time_parsing - start_time).split('.')[0]}')
     logging.info(f'共提取到 {len(all_potential_links_data)} 条潜在链接。')
 
     logging.info(f'\n开始去重和规范化链接...')
@@ -508,9 +550,9 @@ if __name__ == "__main__":
 
     for result, channel_name in results:
         if result:
-            canonical_id, cleaned_original_link = result
+            canonical_id = result['simplified_canonical_id'] if os.getenv('IGNORE_USERINFO', 'false').lower() == 'true' else result['canonical_id']
             if canonical_id not in unique_configs:
-                unique_configs[canonical_id] = cleaned_original_link
+                unique_configs[canonical_id] = result
                 channels_that_worked.add(channel_name)
                 logging.debug(f"添加唯一配置: {canonical_id}")
             else:
@@ -519,24 +561,48 @@ if __name__ == "__main__":
             invalid_links_count += 1
             logging.debug(f"跳过无效链接: {channel_name}")
 
-    end_time_dedup = datetime.now()
-    processed_codes_list = list(unique_configs.values())
-    logging.info(f'去重完成 - 耗时 {str(end_time_dedup - end_time_parsing).split(".")[0]}')
-    logging.info(f'最终得到 {len(processed_codes_list)} 条有效配置，跳过 {invalid_links_count} 条无效链接。')
+    logging.info(f'去重完成 - 耗时 {str(end_time - end_time_parsing).split('.')[0]}')
+    logging.info(f'最终得到 {len(unique_configs)} 条有效配置，跳过 {invalid_links_count} 条无效链接。')
 
     logging.info(f'\n更新频道列表...')
     new_tg_name_json = sorted(list(channels_that_worked))
     inv_tg_name_json = sorted(list((set(tg_name_json) - channels_that_worked).union(set(inv_tg_name_json))))
-    inv_tg_name_json = [x for x in inv_tg_name_json if isinstance(x, str) and len(x) >= 5]
+    inv_tg_names = [x for x in inv_tg_name_json if isinstance(x, str) and len(x) >= 5]
 
-    json_dump(new_tg_name_json, TG_CHANNELS_FILE)
-    json_dump(inv_tg_name_json, INV_TG_CHANNELS_FILE)
+    json.dump(new_tg_names, TG_CHANNELS_FILE)
+    json.dump(inv_tg_names, INV_TG_CHANNELS_FILE)
 
-    logging.info(f'  更新后 {TG_CHANNELS_FILE} 频道数: {len(new_tg_name_json)}')
-    logging.info(f'  更新后 {INV_TG_CHANNELS_FILE} 频道数: {len(inv_tg_name_json)}')
+    logging.info(f'  更新后 {TG_CHANNELS_FILE} 频道数: {len(new_tg_names)})')
+    f'{logging.info(f'  更新后 {INV_TG_CHANNELS_FILE} 频道数: {len(inv_tg_names)})')}
 
-    logging.info(f'\n保存有效配置到 {CONFIG_TG_FILE}...')
-    write_lines(processed_codes_list, CONFIG_TG_FILE)
+    logging.info(f'\n保存有效配置到 {CONFIG_TG_TXT_FILE} 和 {CONFIG_YG_YAML_FILE}}...')
+}...')
+    processed_codes_list = [config['link'] for config in unique_configs.values()]
+    write_lines(processed_codes_list, CONFIG_TG_TXT_FILE)
+
+    yaml_proxies_config = []
+    for config, in unique_configs.values():
+        proxy = {
+            'name': 'config['node_name'],
+            'scheme': 'config['scheme'],
+            'host': config['host'],
+            'port': config['port'],
+            'userinfo': config['userinfo'],
+            'path': 'config[path'] or None,
+            'query': '{k: v[0] if len(v) == 1 else v for k, v in sorted(config['query'].items())} or None}',
+            'original_path': config['link'],
+            'remark': 'config['remark'] or None',
+            'dedup_key': config['simplified_canonicalized_id']
+        }
+        if config['vmess_params']:
+            proxy['vmess_params'] = config['vmess_params']
+        if config['ssr_params']:
+            proxy['ssr_params'] = config['ssr_params']
+        yaml_proxies.append(proxy)
+
+    yaml_data = {'proxies': yaml_proxies_config}
+    yaml.dump(yaml_data, CONFIG_TG_YAML_FILE)
 
     end_time_total = datetime.now()
-    logging.info(f'\n脚本运行完毕！总耗时 - {str(end_time_total - start_time).split(".")[0]}')
+    logging.info(f'\n脚本运行完毕！总耗时 - {str(end_time_total - start_time).split('.')[0]}')
+</script>
