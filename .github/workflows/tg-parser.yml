@@ -75,15 +75,16 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install pyyaml
 
     - name: Run TG Parser
       env:
         
         THRD_PARS: '128' # 并发抓取线程数
-        PARS_DP: '18'     # 每个频道抓取页面深度
+        PARS_DP: '3'     # 每个频道抓取页面深度
         USE_INV_TC: 'n'  # 是否使用无效频道列表
       run: |
-        # 运行你的 Python 脚本
+        export LOG_LEVEL=DEBUG
         python tg-parser.py
 
     - name: Configure Git for Parser Push
