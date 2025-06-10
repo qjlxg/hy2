@@ -20,7 +20,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Create timestamped directory
       run: |
@@ -47,13 +47,13 @@ jobs:
         git push || echo "Failed to push archive changes."
 
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       id: setup-python
       with:
         python-version: '3.x'
 
     - name: Cache dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}-${{ steps.setup-python.outputs.python-version }}
@@ -76,12 +76,29 @@ jobs:
       run: |
         python tg-parser.py | tee parser_output.log
 
-    - name: Upload parser logs
+    - name: Verify deduplication in configtg.txt
+      run: |
+        if [ -f configtg.txt ]; then
+          total=$(wc -l < configtg.txt)
+          unique=$(sort configtg.txt | uniq | wc -l)
+          duplicates=$((total - unique))
+          echo "Total links: $total, Unique links: $unique, Duplicates: $duplicates, Duplicate rate: $(echo "scale=2; $duplicates/$total*100" | bc)%"
+          if [ $duplicates -gt 0 ]; then
+            echo "Warning: Found $duplicates duplicate links in configtg.txt"
+            sort configtg.txt | uniq -d > duplicates.txt
+          fi
+        else
+          echo "configtg.txt not found."
+        fi
+
+    - name: Upload parser logs and duplicates
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: parser-logs
-        path: parser_output.log
+        path: |
+          parser_output.log
+          duplicates.txt
 
     - name: Commit and push parser updated files
       run: |
@@ -95,77 +112,99 @@ jobs:
       run: |
         [ -f python/splitter.py ] && python python/splitter.py || echo "python/splitter.py not found, skipping split."
 
+    - name: Verify deduplication in split files
+      run: |
+        for file in python/*; do
+          if [ -f "$file" ]; then
+            total=$(wc -l < "$file")
+            unique=$(sort "$file" | uniq | wc -l)
+            duplicates=$((total - unique))
+            echo "$file: Total links: $total, Unique links: $unique, Duplicates: $duplicates, Duplicate rate: $(echo "scale=2; $duplicates/$total*100" | bc)%"
+            if [ $duplicates -gt 0 ]; then
+              echo "Warning: Found $duplicates duplicate links in $file"
+              sort "$file" | uniq -d >> split_duplicates.txt
+            fi
+          fi
+        done
+
+    - name: Upload split duplicates
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: split-duplicates
+        path: split_duplicates.txt
+
     - name: Check for split changes
       id: changes_split
       run: |
         git diff --quiet python/vmess python/vless python/trojan python/ss python/socks python/hysteria2 python/tuic python/hysteria python/naive python/ssr python/unknown || echo "::set-output name=changed::true"
 
-    - name: Commit and push splitted files
+    - name: Commit and push split files
       if: steps.changes_split.outputs.changed == 'true'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add python/vmess python/vless python/trojan python/ss python/socks python/hysteria2 python/tuic python/hysteria python/naive python/ssr python/unknown
         git commit -am "Update v2ray subscriptions"
-        git push || echo "Failed to push splitted files."
+        git push || echo "Failed to push split files."
 
-    - name: Create splitted directory
-      run: mkdir -p splitted
+    - name: Create split directory
+      run: mkdir -p split
 
     - name: Convert mixed to base64
       run: |
-        [ -f configtg.txt ] && cat configtg.txt | base64 | tr -d '\n' > splitted/mixed || echo "configtg.txt not found."
+        [ -f configtg.txt ] && cat configtg.txt | base64 | tr -d '\n' > split/mixed || echo "configtg.txt not found."
 
     - name: Convert socks to base64
       run: |
-        [ -f python/socks ] && cat python/socks | base64 | tr -d '\n' > splitted/socks || echo "python/socks not found."
+        [ -f python/socks ] && cat python/socks | base64 | tr -d '\n' > split/socks || echo "python/socks not found."
 
     - name: Convert ss to base64
       run: |
-        [ -f python/ss ] && cat python/ss | base64 | tr -d '\n' > splitted/ss || echo "python/ss not found."
+        [ -f python/ss ] && cat python/ss | base64 | tr -d '\n' > split/ss || echo "python/ss not found."
 
     - name: Convert trojan to base64
       run: |
-        [ -f python/trojan ] && cat python/trojan | base64 | tr -d '\n' > splitted/trojan || echo "python/trojan not found."
+        [ -f python/trojan ] && cat python/trojan | base64 | tr -d '\n' > split/trojan || echo "python/trojan not found."
 
     - name: Convert vless to base64
       run: |
-        [ -f python/vless ] && cat python/vless | base64 | tr -d '\n' > splitted/vless || echo "python/vless.py not found."
+        [ -f python/vless ] && cat python/vless | base64 | tr -d '\n' > split/vless || echo "python/vless not found."
 
     - name: Convert vmess to base64
       run: |
-        [ -f python/vmess ] && cat python/vmess | base64 | tr -d '\n' > splited/vmess || echo "python/vmess not found."
+        [ -f python/vmess ] && cat python/vmess | base64 | tr -d '\n' > split/vmess || echo "python/vmess not found."
 
     - name: Convert tuic to base64
       run: |
-        [ -f python/tuic ] && cat python/tuic | base64 | tr -d 'tuic' > splited/tuic || echo "python/tuic not found."
+        [ -f python/tuic ] && cat python/tuic | base64 | tr -d '\n' > split/tuic || echo "python/tuic not found."
 
     - name: Convert hysteria2 to base64
       run: |
-        [ -f python/hysteria2 ] && cat python/hysteria2 | base64 | tr -d '\n' > splited/hysteria2 || echo "python/hysteria2 not found."
+        [ -f python/hysteria2 ] && cat python/hysteria2 | base64 | tr -d '\n' > split/hysteria2 || echo "python/hysteria2 not found."
 
     - name: Convert hysteria to base64
       run: |
-        [ -f python/hysteria ] && cat python/hysteria | base64 | tr -d '\n' > splited/hysteria || echo "python/hysteria not found."
+        [ -f python/hysteria ] && cat python/hysteria | base64 | tr -d '\n' > split/hysteria || echo "python/hysteria not found."
 
     - name: Convert naive to base64
       run: |
-        [ -f python/naive ] && cat python/naive | base64 | tr -d '\n' > splited/nnaive || echo "python/naive not found."
+        [ -f python/naive ] && cat python/naive | base64 | tr -d '\n' > split/naive || echo "python/naive not found."
 
     - name: Convert ssr to base64
       run: |
-        [ -f python/ssr ] && cat python/ssr | base64 | tr -d '\n' > splited/sr || echo "python/ssr not found."
+        [ -f python/ssr ] && cat python/ssr | base64 | tr -d '\n' > split/ssr || echo "python/ssr not found."
 
     - name: Check for base64 changes
       id: changes64
       run: |
-        git diff --quiet splited/mixed splited/socks splited/ss splited/trojan splited/vless splited/vmess splited/tuic splited/hysteria2 splited/hysteria splited/naive splited/ssr || echo "::set-output name=changed::true"
+        git diff --quiet split/mixed split/socks split/ss split/trojan split/vless split/vmess split/tuic split/hysteria2 split/hysteria split/naive split/ssr || echo "::set-output name=changed::true"
 
     - name: Commit and push base64 files
       if: steps.changes64.outputs.changed == 'true'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add splited/
+        git add split/
         git commit --allow-empty -am "Update Base64 output files"
         git push || echo "Failed to push Base64 changes."
