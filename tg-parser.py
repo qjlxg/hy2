@@ -13,7 +13,7 @@ from urllib.parse import urlparse, parse_qs, urlencode, quote
 import logging
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
-import uuid  # Added for UUID validation
+import uuid  # 新增：用于验证 UUID
 
 # 禁用不安全请求警告
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
@@ -511,7 +511,7 @@ if __name__ == "__main__":
                 logging.debug(f"从配置提取频道名: {cleaned_name}")
 
     initial_tg_count = len(tg_name_json)
-    tg_name_json = sorted(list(set(tg_name_json.union(extracted_tg_names)))
+    tg_name_json = sorted(list(set(tg_name_json).union(extracted_tg_names)))
 
     logging.info(f'  更新后 {TG_CHANNELS_FILE} 频道总数: {len(tg_name_json)} (新增 {len(tg_name_json) - initial_tg_count})')
 
@@ -561,7 +561,7 @@ if __name__ == "__main__":
             invalid_links_count += 1
             logging.debug(f"跳过无效链接: {channel_name}")
 
-    logging.info(f'去重完成 - 耗时 {str(end_time - end_time_parsing).split('.')[0]}')
+    logging.info(f'去重完成 - 耗时 {str(datetime.now() - end_time_parsing).split('.')[0]}')
     logging.info(f'最终得到 {len(unique_configs)} 条有效配置，跳过 {invalid_links_count} 条无效链接。')
 
     logging.info(f'\n更新频道列表...')
@@ -569,30 +569,29 @@ if __name__ == "__main__":
     inv_tg_name_json = sorted(list((set(tg_name_json) - channels_that_worked).union(set(inv_tg_name_json))))
     inv_tg_names = [x for x in inv_tg_name_json if isinstance(x, str) and len(x) >= 5]
 
-    json.dump(new_tg_names, TG_CHANNELS_FILE)
-    json.dump(inv_tg_names, INV_TG_CHANNELS_FILE)
+    json_dump(new_tg_name_json, TG_CHANNELS_FILE)
+    json_dump(inv_tg_names, INV_TG_CHANNELS_FILE)
 
-    logging.info(f'  更新后 {TG_CHANNELS_FILE} 频道数: {len(new_tg_names)})')
-    f'{logging.info(f'  更新后 {INV_TG_CHANNELS_FILE} 频道数: {len(inv_tg_names)})')}
+    logging.info(f'  更新后 {TG_CHANNELS_FILE} 频道数: {len(new_tg_name_json)}')
+    logging.info(f'  更新后 {INV_TG_CHANNELS_FILE} 频道数: {len(inv_tg_names)}')
 
-    logging.info(f'\n保存有效配置到 {CONFIG_TG_TXT_FILE} 和 {CONFIG_YG_YAML_FILE}}...')
-}...')
+    logging.info(f'\n保存有效配置到 {CONFIG_TG_TXT_FILE} 和 {CONFIG_TG_YAML_FILE}...')
     processed_codes_list = [config['link'] for config in unique_configs.values()]
     write_lines(processed_codes_list, CONFIG_TG_TXT_FILE)
 
-    yaml_proxies_config = []
-    for config, in unique_configs.values():
+    yaml_proxies = []
+    for config in unique_configs.values():
         proxy = {
-            'name': 'config['node_name'],
-            'scheme': 'config['scheme'],
+            'name': config['node_name'],
+            'scheme': config['scheme'],
             'host': config['host'],
             'port': config['port'],
             'userinfo': config['userinfo'],
-            'path': 'config[path'] or None,
-            'query': '{k: v[0] if len(v) == 1 else v for k, v in sorted(config['query'].items())} or None}',
-            'original_path': config['link'],
-            'remark': 'config['remark'] or None',
-            'dedup_key': config['simplified_canonicalized_id']
+            'path': config['path'] or None,
+            'query': {k: v[0] if len(v) == 1 else v for k, v in sorted(config['query'].items())} or None,
+            'original_link': config['link'],
+            'remark': config['remark'] or None,
+            'dedup_key': config['simplified_canonical_id']
         }
         if config['vmess_params']:
             proxy['vmess_params'] = config['vmess_params']
@@ -600,9 +599,8 @@ if __name__ == "__main__":
             proxy['ssr_params'] = config['ssr_params']
         yaml_proxies.append(proxy)
 
-    yaml_data = {'proxies': yaml_proxies_config}
-    yaml.dump(yaml_data, CONFIG_TG_YAML_FILE)
+    yaml_data = {'proxies': yaml_proxies}
+    yaml_dump(yaml_data, CONFIG_TG_YAML_FILE)
 
     end_time_total = datetime.now()
     logging.info(f'\n脚本运行完毕！总耗时 - {str(end_time_total - start_time).split('.')[0]}')
-</script>
