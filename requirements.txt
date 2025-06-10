@@ -1,19 +1,4 @@
 beautifulsoup4
-blinker
-certifi
-charset-normalizer
-click
-filelock
-Flask
-idna
-itsdangerous
-Jinja2
-lxml
-MarkupSafe
-PySocks
-requests
-snscrape
-soupsieve
-urllib3
-Werkzeug
 pyyaml
+requests
+# 其他隐式依赖（如certifi, charset-normalizer, idna, soupsieve, urllib3）会在安装requests和beautifulsoup4时自动安装
