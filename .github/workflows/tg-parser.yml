@@ -28,7 +28,7 @@ jobs:
         mkdir -p ./archives/$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')
         mkdir -p ./archives/channels/$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')
         # 复制文件到归档目录
-        [ -f splitted/mixed ] && cp splitted/mixed ./archives/$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')/ || echo "splitted/mixed not found."
+        [ -f split/mixed ] && cp split/mixed ./archives/$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')/ || echo "split/mixed not found."
         [ -f telegramchannels.json ] && cp telegramchannels.json ./archives/channels/$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')/ || echo "telegramchannels.json not found."
         [ -f configtg.txt ] && cp configtg.txt ./archives/$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')/ || echo "configtg.txt not found."
         [ -f configtg.yaml ] && cp configtg.yaml ./archives/$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')/ || echo "configtg.yaml not found."
@@ -72,9 +72,8 @@ jobs:
         PARS_DP: '3'
         USE_INV_TC: 'n'
         IGNORE_USERINFO: ${{ github.event.inputs.ignore_userinfo || 'true' }}
-        LOG_LEVEL: 'DEBUG'
-      run: |
-        python tg-parser.py | tee parser_output.log
+        LOG_LEVEL: 'info'
+      run: python3 tg-parser.py | tee parser_output.log
 
     - name: Verify deduplication in configtg.txt
       run: |
@@ -88,20 +87,22 @@ jobs:
             sort configtg.txt | uniq -d > duplicates.txt
           fi
         else
-          echo "configtg.txt not found."
+          echo "failed: configtg.txt not found."
+            exit 1
         fi
 
     - name: Upload parser logs and duplicates
-      if: always()
-      uses: actions/upload-artifact@v3
+      if: actions/upload-artifact@v4
       with:
         name: parser-logs
         path: |
           parser_output.log
           duplicates.txt
+        overwrite: true
+        retention-days: 7
 
     - name: Commit and push parser updated files
-      run: |
+      run: actions
         git config --local user.name "GitHub Action"
         git config --local user.email "action@github.com"
         git add configtg.txt configtg.yaml telegramchannels.json invalidtelegramchannels.json
@@ -129,10 +130,12 @@ jobs:
 
     - name: Upload split duplicates
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: split-duplicates
         path: split_duplicates.txt
+        overwrite: true
+        retention-days: 7
 
     - name: Check for split changes
       id: changes_split
