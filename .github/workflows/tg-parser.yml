@@ -71,7 +71,7 @@ jobs:
         PARS_DP: '3'
         USE_INV_TC: 'n'
         IGNORE_USERINFO: ${{ github.event.inputs.ignore_userinfo || 'true' }}
-        LOG_LEVEL: 'info'
+        LOG_LEVEL: 'debug'
       run: python3 tg-parser.py | tee parser_output.log
 
     - name: Verify deduplication in configtg.txt
