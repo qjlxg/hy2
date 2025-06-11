@@ -1,0 +1,236 @@
+name: Parse Channels, Split & Base64
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      ignore_userinfo:
+        description: 'Ignore userinfo for deduplication'
+        default: 'true'
+        required: false
+  schedule:
+    - cron: '0 */12 * * *' # 每 12 小时运行
+
+jobs:
+  run_python_and_push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Create timestamped directory and archive
+      run: |
+        TIMESTAMP_DIR="$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')"
+        mkdir -p "./archives/${TIMESTAMP_DIR}"
+        mkdir -p "./archives/channels/${TIMESTAMP_DIR}"
+        # 复制文件到归档目录，如果文件不存在则输出警告
+        cp split/mixed "./archives/${TIMESTAMP_DIR}/" || echo "Warning: split/mixed not found, skipping archive."
+        cp telegramchannels.json "./archives/channels/${TIMESTAMP_DIR}/" || echo "Warning: telegramchannels.json not found, skipping archive."
+        cp configtg.txt "./archives/${TIMESTAMP_DIR}/" || echo "Warning: configtg.txt not found, skipping archive."
+        cp configtg.yaml "./archives/${TIMESTAMP_DIR}/" || echo "Warning: configtg.yaml not found, skipping archive."
+
+    - name: Grab content and update latest backup
+      run: |
+        mkdir -p archives/latest_backup
+        curl https://github.com/qjlxg/hy2/raw/main/configtg.txt -o archives/latest_backup/mixed || { echo "Error: Failed to download configtg.txt backup. Exiting."; exit 1; }
+
+    - name: Commit and push archived backups
+      run: |
+        git config --global user.name 'Github Action'
+        git config --global user.email 'Action@github.com'
+        git add archives/
+        git commit -m "Archived backups for ${{ github.run_id }}" || echo "No changes to archive."
+        git push || echo "Failed to push archive changes."
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      id: setup-python
+      with:
+        python-version: '3.x'
+
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}-${{ steps.setup-python.outputs.python-version }}
+        restore-keys: |
+           ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run TG Parser
+      env:
+        THRD_PARS: '128'
+        PARS_DP: '3'
+        USE_INV_TC: 'n'
+        IGNORE_USERINFO: ${{ github.event.inputs.ignore_userinfo || 'true' }}
+        LOG_LEVEL: 'debug' # 确保这里是 'debug'
+      run: |
+        echo "Starting tg-parser.py execution and redirecting all output to parser_output.log..."
+        # 将标准输出 (1) 和标准错误 (2) 都重定向并管道给 tee
+        python3 tg-parser.py 2>&1 | tee parser_output.log
+        echo "Finished tg-parser.py execution."
+        # 打印 parser_output.log 的内容到 GitHub Actions 实时日志，方便调试
+        echo "--- Content of parser_output.log ---"
+        cat parser_output.log
+        echo "------------------------------------"
+
+    - name: Verify deduplication in configtg.txt
+      run: |
+        if [ -f configtg.txt ]; then
+          total=$(wc -l < configtg.txt)
+          unique=$(sort configtg.txt | uniq | wc -l)
+          duplicates=$((total - unique))
+          echo "Total links: $total, Unique links: $unique, Duplicates: $duplicates, Duplicate rate: $(echo "scale=2; $duplicates/$total*100" | bc)%"
+          if [ "$duplicates" -gt 0 ]; then
+            echo "Warning: Found $duplicates duplicate links in configtg.txt"
+            sort configtg.txt | uniq -d > duplicates.txt
+          else
+            touch duplicates.txt # 确保文件存在，避免上传失败
+          fi
+        else
+          echo "Error: configtg.txt not found. Exiting."
+          exit 1
+        fi
+
+    - name: Upload parser logs and duplicates
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: parser-logs
+        path: |
+          parser_output.log
+          duplicates.txt
+        overwrite: true
+        retention-days: 1
+
+    - name: Commit and push parser updated files
+      run: |
+        git config --local user.name "GitHub Action"
+        git config --local user.email "action@github.com"
+        git add configtg.txt configtg.yaml telegramchannels.json invalidtelegramchannels.json
+        git diff --staged --quiet || git commit -m "Update TG configs and channel lists for ${{ github.run_id }}" || echo "No changes from parser."
+        git push || echo "Failed to push parser changes."
+
+    - name: Split UTF-8 and update subscriptions
+      run: |
+        if [ -f python/splitter.py ]; then
+          python python/splitter.py
+        else
+          echo "Warning: python/splitter.py not found, skipping split."
+        fi
+
+    - name: Verify deduplication in split files
+      run: |
+        touch split_duplicates.txt
+        for file in python/*; do
+          if [ -f "$file" ] && [ "$(basename "$file")" != "splitter.py" ]; then # 排除 splitter.py
+            total=$(wc -l < "$file")
+            unique=$(sort "$file" | uniq | wc -l)
+            duplicates=$((total - unique))
+            echo "$file: Total links: $total, Unique links: $unique, Duplicates: $duplicates, Duplicate rate: $(echo "scale=2; $duplicates/$total*100" | bc)%"
+            if [ "$duplicates" -gt 0 ]; then
+              echo "Warning: Found $duplicates duplicate links in $file"
+              sort "$file" | uniq -d >> split_duplicates.txt
+            fi
+          fi
+        done
+
+    - name: Upload split duplicates
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: split-duplicates
+        path: split_duplicates.txt
+        overwrite: true
+        retention-days: 7
+
+    - name: Check for split changes
+      id: changes_split
+      run: |
+        # 只检查存在的文件
+        files=""
+        for file in python/vmess python/vless python/trojan python/ss python/socks python/hysteria2 python/tuic python/hysteria python/naive python/ssr python/unknown; do
+          if [ -f "$file" ]; then
+            files="$files $file"
+          fi
+        done
+        if [ -z "$files" ]; then
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+        elif git diff --quiet $files; then
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Commit and push split files
+      if: steps.changes_split.outputs.changed == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        # 只添加存在的文件
+        files=""
+        for file in python/vmess python/vless python/trojan python/ss python/socks python/hysteria2 python/tuic python/hysteria python/naive python/ssr python/unknown; do
+          if [ -f "$file" ]; then
+            files="$files $file"
+          fi
+        done
+        if [ -n "$files" ]; then
+          git add $files
+          git commit -m "Update v2ray subscriptions for ${{ github.run_id }}"
+          git push || echo "Failed to push split files."
+        else
+          echo "No split files to commit."
+        fi
+
+    - name: Create split directory
+      run: mkdir -p split
+
+    - name: Convert files to Base64
+      run: |
+        declare -a files=("configtg.txt:mixed" "python/socks:socks" "python/ss:ss" "python/trojan:trojan" \
+                          "python/vless:vless" "python/vmess:vmess" "python/tuic:tuic" \
+                          "python/hysteria2:hysteria2" "python/hysteria:hysteria" \
+                          "python/naive:naive" "python/ssr:ssr")
+        for entry in "${files[@]}"; do
+          IFS=':' read -r input_path output_name <<< "$entry"
+          if [ -f "$input_path" ]; then
+            cat "$input_path" | base64 | tr -d '\n' > "split/$output_name"
+            echo "Converted $input_path to split/$output_name"
+          else
+            echo "Warning: $input_path not found, skipping Base64 conversion."
+          fi
+        done
+
+    - name: Check for base64 changes
+      id: changes64
+      run: |
+        files=""
+        for file in split/mixed split/socks split/ss split/trojan split/vless split/vmess split/tuic split/hysteria2 split/hysteria split/naive split/ssr; do
+          if [ -f "$file" ]; then
+            files="$files $file"
+          fi
+        done
+        if [ -z "$files" ]; then
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+        elif git diff --quiet $files; then
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Commit and push base64 files
+      if: steps.changes64.outputs.changed == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add split/
+        git commit --allow-empty -m "Update Base64 output files for ${{ github.run_id }}"
+        git push || echo "Failed to push Base64 changes."
