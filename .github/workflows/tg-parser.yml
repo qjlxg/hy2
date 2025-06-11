@@ -121,10 +121,10 @@ jobs:
 
     - name: Split UTF-8 and update subscriptions
       run: |
-        if [ -f python/splitter.py ]; then
-          python python/splitter.py
+        if [ -f splitted/splitter.py ]; then
+          python splitted/splitter.py
         else
-          echo "Warning: python/splitter.py not found, skipping split."
+          echo "Warning: splitted/splitter.py not found, skipping split."
         fi
 
     - name: Verify deduplication in split files
