@@ -27,7 +27,6 @@ jobs:
         TIMESTAMP_DIR="$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')"
         mkdir -p "./archives/${TIMESTAMP_DIR}"
         mkdir -p "./archives/channels/${TIMESTAMP_DIR}"
-
         # 复制文件到归档目录，如果文件不存在则输出警告
         cp split/mixed "./archives/${TIMESTAMP_DIR}/" || echo "Warning: split/mixed not found, skipping archive."
         cp telegramchannels.json "./archives/channels/${TIMESTAMP_DIR}/" || echo "Warning: telegramchannels.json not found, skipping archive."
@@ -37,7 +36,6 @@ jobs:
     - name: Grab content and update latest backup
       run: |
         mkdir -p archives/latest_backup
-        # 如果下载失败，中断工作流，因为这可能是重要的数据源
         curl https://github.com/qjlxg/hy2/raw/main/configtg.txt -o archives/latest_backup/mixed || { echo "Error: Failed to download configtg.txt backup. Exiting."; exit 1; }
 
     - name: Commit and push archived backups
@@ -65,7 +63,6 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        # 建议将所有依赖，包括 pyyaml，都列在 requirements.txt 中
         pip install -r requirements.txt
 
     - name: Run TG Parser
@@ -87,6 +84,8 @@ jobs:
           if [ "$duplicates" -gt 0 ]; then
             echo "Warning: Found $duplicates duplicate links in configtg.txt"
             sort configtg.txt | uniq -d > duplicates.txt
+          else
+            touch duplicates.txt # 确保文件存在，避免上传失败
           fi
         else
           echo "Error: configtg.txt not found. Exiting."
@@ -94,7 +93,6 @@ jobs:
         fi
 
     - name: Upload parser logs and duplicates
-      # 修正 if 条件，确保即使上一步失败也能尝试上传日志
       if: always()
       uses: actions/upload-artifact@v4
       with:
@@ -110,7 +108,6 @@ jobs:
         git config --local user.name "GitHub Action"
         git config --local user.email "action@github.com"
         git add configtg.txt configtg.yaml telegramchannels.json invalidtelegramchannels.json
-        # 只有在有实际更改时才提交
         git diff --staged --quiet || git commit -m "Update TG configs and channel lists for ${{ github.run_id }}" || echo "No changes from parser."
         git push || echo "Failed to push parser changes."
 
@@ -124,9 +121,9 @@ jobs:
 
     - name: Verify deduplication in split files
       run: |
-        touch split_duplicates.txt # 确保文件存在，即使没有重复项
+        touch split_duplicates.txt
         for file in python/*; do
-          if [ -f "$file" ]; then # 确保是文件
+          if [ -f "$file" ] && [ "$(basename "$file")" != "splitter.py" ]; then # 排除 splitter.py
             total=$(wc -l < "$file")
             unique=$(sort "$file" | uniq | wc -l)
             duplicates=$((total - unique))
@@ -150,8 +147,16 @@ jobs:
     - name: Check for split changes
       id: changes_split
       run: |
-        # 修正 set-output 语法
-        if git diff --quiet python/vmess python/vless python/trojan python/ss python/socks python/hysteria2 python/tuic python/hysteria python/naive python/ssr python/unknown; then
+        # 只检查存在的文件
+        files=""
+        for file in python/vmess python/vless python/trojan python/ss python/socks python/hysteria2 python/tuic python/hysteria python/naive python/ssr python/unknown; do
+          if [ -f "$file" ]; then
+            files="$files $file"
+          fi
+        done
+        if [ -z "$files" ]; then
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+        elif git diff --quiet $files; then
           echo "changed=false" >> "$GITHUB_OUTPUT"
         else
           echo "changed=true" >> "$GITHUB_OUTPUT"
@@ -162,21 +167,30 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add python/vmess python/vless python/trojan python/ss python/socks python/hysteria2 python/tuic python/hysteria python/naive python/ssr python/unknown
-        git commit -m "Update v2ray subscriptions for ${{ github.run_id }}"
-        git push || echo "Failed to push split files."
+        # 只添加存在的文件
+        files=""
+        for file in python/vmess python/vless python/trojan python/ss python/socks python/hysteria2 python/tuic python/hysteria python/naive python/ssr python/unknown; do
+          if [ -f "$file" ]; then
+            files="$files $file"
+          fi
+        done
+        if [ -n "$files" ]; then
+          git add $files
+          git commit -m "Update v2ray subscriptions for ${{ github.run_id }}"
+          git push || echo "Failed to push split files."
+        else
+          echo "No split files to commit."
+        fi
 
     - name: Create split directory
       run: mkdir -p split
 
-    # 优化 Base64 转换步骤，使其更简洁并避免重复代码
     - name: Convert files to Base64
       run: |
         declare -a files=("configtg.txt:mixed" "python/socks:socks" "python/ss:ss" "python/trojan:trojan" \
                           "python/vless:vless" "python/vmess:vmess" "python/tuic:tuic" \
                           "python/hysteria2:hysteria2" "python/hysteria:hysteria" \
                           "python/naive:naive" "python/ssr:ssr")
-
         for entry in "${files[@]}"; do
           IFS=':' read -r input_path output_name <<< "$entry"
           if [ -f "$input_path" ]; then
@@ -190,8 +204,15 @@ jobs:
     - name: Check for base64 changes
       id: changes64
       run: |
-        # 修正 set-output 语法
-        if git diff --quiet split/mixed split/socks split/ss split/trojan split/vless split/vmess split/tuic split/hysteria2 split/hysteria split/naive split/ssr; then
+        files=""
+        for file in split/mixed split/socks split/ss split/trojan split/vless split/vmess split/tuic split/hysteria2 split/hysteria split/naive split/ssr; do
+          if [ -f "$file" ]; then
+            files="$files $file"
+          fi
+        done
+        if [ -z "$files" ]; then
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+        elif git diff --quiet $files; then
           echo "changed=false" >> "$GITHUB_OUTPUT"
         else
           echo "changed=true" >> "$GITHUB_OUTPUT"
