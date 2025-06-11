@@ -42,6 +42,7 @@ USER_AGENTS = [
 
 # --- 非关键查询参数（用于去重） ---
 # 这些参数的变动通常不影响节点功能，因此在去重时可以忽略
+# 增加了 'sid' 因为它通常是随机生成的，不代表实际节点差异
 NON_CRITICAL_QUERY_PARAMS = {'ed', 'fp', 'allowInsecure', 'obfsParam', 'protoparam', 'ps', 'sid'}
 
 # --- 辅助函数 ---
@@ -196,9 +197,7 @@ def normalize_domain(domain):
     
     # 尝试移除 vXX. 模式 (例如 v16.example.com -> example.com)
     # 避免误伤合法子域名，只针对 v+数字.
-    # 也会尝试处理类似 "v2ray-fark2.ddns.net" -> "v2ray-fark.ddns.net" 这种可能
     normalized = re.sub(r'^v\d+\.', '', normalized)
-    normalized = re.sub(r'-fark\d+\.', '-fark.', normalized) # 针对 v2ray-farkN.ddns.net
 
     # 移除末尾的 . （如果存在）
     normalized = normalized.strip('.')
@@ -217,51 +216,12 @@ def normalize_path(path):
     # 移除路径末尾的斜杠，除非是根路径
     return normalized_path.strip('/')
 
-def normalize_remark(remark_text):
-    """
-    规范化节点备注，去除常见噪音、广告词、序号、时间戳、国旗、随机字符、传输协议等，
-    以提高去重准确性。
-    """
-    if not isinstance(remark_text, str):
-        return ''
-    
-    normalized = remark_text.lower()
-    
-    # 移除常见的频道名和广告词
-    normalized = re.sub(r'(@[a-zA-Z0-9_]+)', '', normalized) # 移除 @开头的频道名
-    normalized = re.sub(r'(telegram|channel|proxy|free|v2ray|vpn|config|official|server|test|speed|modeon|nufilter|zedmodeon|rkvps|limproxy|vpnlime|rayx|foxnt|bede|vps)', '', normalized, flags=re.IGNORECASE)
-    normalized = re.sub(r'(?:[🇦🇧🇨🇩🇪🇫🇬🇭🇮🇯🇰🇱🇲🇳🇴🇵🇶🇷🇸🇹🇺🇻🇼🇽🇾🇿\U0001F1E6-\U0001F1FF]+)', '', normalized) # 移除国旗 emoji
-
-    # 移除数字和可能的序号 (例如 1, 01, #1, -1)
-    normalized = re.sub(r'(?<![a-zA-Z])\b\d{1,4}\b(?![a-zA-Z])', '', normalized) # 移除独立数字
-    normalized = re.sub(r'#\d+', '', normalized)
-    
-    # 移除时间戳、日期格式
-    normalized = re.sub(r'\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}', '', normalized) # MM-DD-YYYY, DD.MM.YY etc.
-    normalized = re.sub(r'\d{4}-\d{2}-\d{2}', '', normalized) # YYYY-MM-DD
-    
-    # 移除常见的传输协议和安全特性
-    normalized = re.sub(r'(tls|ssl|tcp|ws|grpc|http|h2|h1\.1|none|reality|xtls|vless|vmess|trojan|ss|ssr|hysteria|hysteria2|hy2|tuic|juicity|socks|naive\+)', '', normalized)
-    
-    # 移除随机字符串或哈希值（通常是8-32位字母数字混合）
-    normalized = re.sub(r'\b[a-f0-9]{8,32}\b', '', normalized) # 移除看起来像hash的字符串
-    
-    # 移除特殊字符和多余的空格/连字符/下划线
-    normalized = re.sub(r'[^\w\s-]', '', normalized) # 只保留字母数字，空格和连字符
-    normalized = re.sub(r'[\s_-]+', ' ', normalized).strip() # 将多个空白、连字符、下划线替换为一个空格，并去除首尾空格
-
-    # 移除开头和结尾的特殊标记
-    normalized = normalized.strip('+-*/#_')
-
-    # 如果清理后字符串非常短，可能失去意义，可以考虑直接返回空或特定标记
-    if len(normalized) < 3: # 避免空字符串或者只有一两个字符的备注
-        return ''
-
-    return normalized
-
-def generate_node_name(canonical_id_hash):
-    """根据规范化 ID 的哈希值生成一个短节点名称"""
-    return hashlib.md5(canonical_id_hash.encode('utf-8')).hexdigest()[:8]
+def generate_node_name(canonical_id, scheme, host, port):
+    """生成标准化的节点名称，基于简化后的关键字段"""
+    # 进一步简化用于生成节点名称的 key
+    # 使用规范化后的 host
+    simplified_key = f"{scheme}://{host}:{port}" 
+    return hashlib.md5(simplified_key.encode('utf-8')).hexdigest()[:8]
 
 def parse_and_canonicalize(link_string):
     """解析、清理、解码并规范化代理链接"""
@@ -529,24 +489,6 @@ def parse_and_canonicalize(link_string):
             except Exception as e:
                 logging.debug(f"SSR 规范化失败: {e}")
                 return None
-        
-        # 规范化备注并添加到去重键中
-        normalized_remark = normalize_remark(original_remark)
-        # 可以选择是否将规范化后的备注加入去重键
-        # 默认加入，如果希望不加入，可以将环境变量 INCLUDE_REMARK_IN_DEDUP_KEY 设置为 false
-        include_remark_in_dedup_key = os.getenv('INCLUDE_REMARK_IN_DEDUP_KEY', 'true').lower() == 'true'
-        if include_remark_in_dedup_key and normalized_remark:
-            # 使用备注的哈希值，避免过长的备注导致去重键过长
-            remark_hash = hashlib.md5(normalized_remark.encode('utf-8')).hexdigest()[:8]
-            canonical_id_components.append(f"remark_hash={remark_hash}")
-            logging.debug(f"包含规范化备注哈希 '{remark_hash}' ({normalized_remark}) 到去重键。")
-        elif include_remark_in_dedup_key and not normalized_remark:
-            # 如果备注为空，也记录一下，避免为空的备注被忽略
-            canonical_id_components.append("remark_hash=none")
-            logging.debug("备注规范化后为空，记录 'remark_hash=none' 到去重键。")
-        else:
-            logging.debug("配置为不包含备注到去重键。")
-
 
         canonical_id = "###".join(canonical_id_components).lower()
         simplified_canonical_id = canonical_id
@@ -558,7 +500,7 @@ def parse_and_canonicalize(link_string):
             logging.debug(f"去重时忽略 UUID userinfo，简化后的 ID: {simplified_canonical_id}")
         
         if canonical_id:
-            node_name = generate_node_name(simplified_canonical_id) # 根据简化后的 ID 生成名称
+            node_name = generate_node_name(simplified_canonical_id, scheme, host, port)
             return {
                 'canonical_id': canonical_id,
                 'simplified_canonical_id': simplified_canonical_id,
@@ -571,9 +513,8 @@ def parse_and_canonicalize(link_string):
                 'query': query_params, # 原始 query_params，用于保存
                 'vmess_params': vmess_params if scheme == 'vmess' else None,
                 'ssr_params': ssr_params if scheme == 'ssr' else None,
-                'remark': original_remark, # 原始备注
-                'normalized_remark': normalized_remark, # 规范化后的备注
-                'node_name': node_name # 新生成的节点名称
+                'remark': original_remark,
+                'node_name': node_name
             }
         else:
             logging.debug(f"未能生成规范化 ID: {link_without_fragment[:50]}...")
@@ -676,8 +617,6 @@ if __name__ == "__main__":
     thrd_pars = int(os.getenv('THRD_PARS', '128'))
     pars_dp = int(os.getenv('PARS_DP', '1'))
     use_inv_tc = os.getenv('USE_INV_TC', 'n').lower() == 'y'
-    ignore_userinfo = os.getenv('IGNORE_USERINFO', 'false').lower() == 'true' # 获取 IGNORE_USERINFO
-    include_remark_in_dedup_key = os.getenv('INCLUDE_REMARK_IN_DEDUP_KEY', 'true').lower() == 'true' # 获取 INCLUDE_REMARK_IN_DEDUP_KEY
 
     sem_pars = threading.Semaphore(thrd_pars)
 
@@ -686,9 +625,7 @@ if __name__ == "__main__":
     logging.info(f'  每个频道抓取页面深度 (PARS_DP) = {pars_dp}')
     logging.info(f'  使用无效频道列表 (USE_INV_TC) = {use_inv_tc}')
     logging.info(f'  日志级别 (LOG_LEVEL) = {logging.getLevelName(log_level)}')
-    logging.info(f'  忽略 UUID userinfo 去重 (IGNORE_USERINFO) = {ignore_userinfo}')
-    logging.info(f'  规范化备注并包含到去重键 (INCLUDE_REMARK_IN_DEDUP_KEY) = {include_remark_in_dedup_key}')
-
+    logging.info(f'  忽略 userinfo 去重 (IGNORE_USERINFO) = {os.getenv("IGNORE_USERINFO", "false")}')
 
     logging.info(f'\n现有频道统计:')
     logging.info(f'  {TG_CHANNELS_FILE} 中的频道总数 - {len(tg_name_json)}')
@@ -844,7 +781,7 @@ if __name__ == "__main__":
     yaml_proxies = []
     for config in unique_configs.values():
         proxy = {
-            'name': config['node_name'], # 使用新生成的短名称
+            'name': config['node_name'],
             'scheme': config['scheme'],
             'host': config['host'], # 这里是规范化后的 host
             'port': config['port'],
@@ -853,8 +790,7 @@ if __name__ == "__main__":
             # 将 query 字典转换为更友好的格式，跳过空值
             'query': {k: v[0] if len(v) == 1 else v for k, v in sorted(config['query'].items()) if v} if config['query'] else None,
             'original_link': config['link'],
-            'remark': config['remark'] or None, # 原始备注
-            'normalized_remark': config['normalized_remark'] or None, # 规范化后的备注
+            'remark': config['remark'] or None,
             'dedup_key': config['simplified_canonical_id']
         }
         if config['vmess_params']:
