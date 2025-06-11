@@ -42,7 +42,8 @@ USER_AGENTS = [
 
 # --- 非关键查询参数（用于去重） ---
 # 这些参数的变动通常不影响节点功能，因此在去重时可以忽略
-NON_CRITICAL_QUERY_PARAMS = {'ed', 'fp', 'allowInsecure', 'obfsParam', 'protoparam', 'ps'}
+# 增加了 'sid' 因为它通常是随机生成的，不代表实际节点差异
+NON_CRITICAL_QUERY_PARAMS = {'ed', 'fp', 'allowInsecure', 'obfsParam', 'protoparam', 'ps', 'sid'}
 
 # --- 辅助函数 ---
 
@@ -147,6 +148,7 @@ def is_uuid(s):
 def normalize_repeated_patterns(text):
     """
     规范化重复的模式，例如 'A-A-A' 变成 'A'，或 'Telegram:@NUFiLTER-Telegram:@NUFiLTER'
+    也会尝试去除常见的广告词或多余的短语，并确保长度不会过长
     """
     if not isinstance(text, str):
         return text
@@ -170,30 +172,55 @@ def normalize_repeated_patterns(text):
     # 移除开头和结尾的连字符
     text = text.strip('-')
 
+    # 移除常见的广告或不相关短语
+    text = re.sub(r'(?:Join--VPNCUSTOMIZE\.V2ray\.re)', '', text, flags=re.IGNORECASE)
+    text = re.sub(r'(?:telegram:)?@?[a-zA-Z0-9_]+(?:-|$)','',text,flags=re.IGNORECASE) # 移除独立的频道名，如果它们只是噪音
+
+    # 再次清理多余连字符和斜杠
+    text = re.sub(r'-+', '-', text).strip('-')
+    text = re.sub(r'/+', '/', text).strip('/')
+
+    # 如果处理后仍然非常长，可以考虑截断或哈希，但需谨慎
+    # 目前不强制截断，因为可能丢失信息
     return text
 
 def normalize_domain(domain):
-    """规范化域名，统一小写并移除 www. 前缀"""
+    """
+    规范化域名，统一小写，移除 www. 前缀，并尝试处理 vXX. 模式
+    例如：v16.vxlimir.com -> vxlimir.com
+    """
     if not isinstance(domain, str):
         return domain
     normalized = domain.lower()
     if normalized.startswith('www.'):
-        return normalized[4:]
+        normalized = normalized[4:]
+    
+    # 尝试移除 vXX. 模式 (例如 v16.example.com -> example.com)
+    # 避免误伤合法子域名，只针对 v+数字.
+    normalized = re.sub(r'^v\d+\.', '', normalized)
+
+    # 移除末尾的 . （如果存在）
+    normalized = normalized.strip('.')
+
     return normalized
 
 def normalize_path(path):
-    """规范化路径，移除重复的频道名称并清理斜杠"""
+    """规范化路径，移除重复的频道名称，清理斜杠，并去除路径中的查询参数"""
     if not path:
         return ''
     
-    normalized_path = normalize_repeated_patterns(path)
+    # 分离路径和可能的查询参数
+    path_without_query = path.split('?', 1)[0].split('#', 1)[0]
+    
+    normalized_path = normalize_repeated_patterns(path_without_query)
     # 移除路径末尾的斜杠，除非是根路径
     return normalized_path.strip('/')
 
 def generate_node_name(canonical_id, scheme, host, port):
     """生成标准化的节点名称，基于简化后的关键字段"""
     # 进一步简化用于生成节点名称的 key
-    simplified_key = f"{scheme}://{normalize_domain(host)}:{port}"
+    # 使用规范化后的 host
+    simplified_key = f"{scheme}://{host}:{port}" 
     return hashlib.md5(simplified_key.encode('utf-8')).hexdigest()[:8]
 
 def parse_and_canonicalize(link_string):
@@ -223,7 +250,7 @@ def parse_and_canonicalize(link_string):
             decoded_payload_str = base64.b64decode(b64_payload).decode("utf-8", errors='replace')
             vmess_json_payload = json.loads(decoded_payload_str)
             
-            # 使用 VMess 内部的 host 和 port 来构建一个临时的 URL 用于 urlparse
+            # 使用 VMess 内部的 add 和 port 来构建一个临时的 URL 用于 urlparse
             add = vmess_json_payload.get('add', '')
             port = vmess_json_payload.get('port', '')
             
@@ -286,7 +313,7 @@ def parse_and_canonicalize(link_string):
             return None
 
         # 规范化 host 和 port
-        host = normalize_domain(parsed.hostname)
+        host = normalize_domain(parsed.hostname) # 使用增强的 normalize_domain
         port = parsed.port
         userinfo = parsed.username
 
@@ -295,30 +322,40 @@ def parse_and_canonicalize(link_string):
             return None
 
         canonical_id_components = [scheme]
-        ignore_userinfo = os.getenv('IGNORE_USERINFO', 'false').lower() == 'true' and is_uuid(userinfo)
-        if userinfo and not ignore_userinfo:
-            if scheme == 'ss':
-                try:
-                    # SS userinfo 解码后是 method:password
-                    userinfo_decoded = base64.b64decode(userinfo + '=' * (-len(userinfo) % 4)).decode("utf-8", errors='replace')
-                    if ':' in userinfo_decoded:
-                        method, password = userinfo_decoded.split(':', 1)
-                        canonical_id_components.append(f"{method.lower()}:{password.lower()}") # SS method和password小写参与去重
-                    else:
-                        logging.debug(f"SS userinfo 解码后格式错误: {userinfo_decoded}")
+        ignore_userinfo = os.getenv('IGNORE_USERINFO', 'false').lower() == 'true'
+        
+        # 针对 userinfo 的更严格规范化
+        if userinfo:
+            if ignore_userinfo and is_uuid(userinfo):
+                logging.debug(f"忽略 UUID userinfo 用于去重: {userinfo}")
+            elif ignore_userinfo and not is_uuid(userinfo):
+                # 如果不是 UUID 且配置为忽略 userinfo，则对 userinfo 进行规范化处理
+                # 这会处理如 TELEGRAM_BYA_Rk_Vps_Rk_Vps 这样的 userinfo
+                normalized_userinfo = normalize_repeated_patterns(userinfo)
+                if normalized_userinfo:
+                    canonical_id_components.append(normalized_userinfo)
+                logging.debug(f"规范化非 UUID userinfo 用于去重: '{userinfo}' -> '{normalized_userinfo}'")
+            elif not ignore_userinfo: # 如果不忽略 userinfo
+                if scheme == 'ss':
+                    try:
+                        # SS userinfo 解码后是 method:password
+                        userinfo_decoded = base64.b64decode(userinfo + '=' * (-len(userinfo) % 4)).decode("utf-8", errors='replace')
+                        if ':' in userinfo_decoded:
+                            method, password = userinfo_decoded.split(':', 1)
+                            canonical_id_components.append(f"{method.lower()}:{password.lower()}") # SS method和password小写参与去重
+                        else:
+                            logging.debug(f"SS userinfo 解码后格式错误: {userinfo_decoded}")
+                            return None
+                    except Exception as e:
+                        logging.debug(f"SS userinfo Base64 解码失败: {userinfo[:50]}... 错误: {e}")
                         return None
-                except Exception as e:
-                    logging.debug(f"SS userinfo Base64 解码失败: {userinfo[:50]}... 错误: {e}")
-                    return None
-            else:
-                canonical_id_components.append(userinfo)
-        elif userinfo:
-            logging.debug(f"忽略 userinfo 用于去重: {userinfo}")
+                else:
+                    canonical_id_components.append(userinfo)
 
         canonical_id_components.append(f"{host}:{port}")
 
         # 规范化 path
-        canonical_path = normalize_path(parsed.path)
+        canonical_path = normalize_path(parsed.path) # 使用增强的 normalize_path
         if canonical_path:
             canonical_id_components.append(f"path={quote(canonical_path)}")
 
@@ -331,7 +368,7 @@ def parse_and_canonicalize(link_string):
             if key_lower == 'host':
                 for value in sorted(query_params[key]):
                     # 规范化 host 值，移除 www. 并转小写
-                    normalized_value = normalize_domain(value)
+                    normalized_value = normalize_domain(value) # 使用增强的 normalize_domain
                     if normalized_value: # 只有非空才加入
                         canonical_query_list.append(f"{quote(key_lower)}={quote(normalized_value)}")
                 continue # 已处理，跳过后续通用逻辑
@@ -339,7 +376,7 @@ def parse_and_canonicalize(link_string):
             # 特殊处理 sni 参数
             if key_lower == 'sni':
                 for value in sorted(query_params[key]):
-                    normalized_value = normalize_domain(value)
+                    normalized_value = normalize_domain(value) # 使用增强的 normalize_domain
                     if normalized_value: # 只有非空才加入
                         canonical_query_list.append(f"{quote(key_lower)}={quote(normalized_value)}")
                 continue # 已处理，跳过后续通用逻辑
@@ -382,11 +419,11 @@ def parse_and_canonicalize(link_string):
                         # 如果 add 包含 @ 并且不是 UUID，则只取 @ 后面的部分
                         if field_lower == 'add' and '@' in value and not is_uuid(value.split('@')[0]):
                              value = value.split('@')[-1]
-                        value = normalize_domain(value) # 统一 host/sni 格式
+                        value = normalize_domain(value) # 统一 host/sni 格式，使用增强的 normalize_domain
                     
                     # 规范化 serviceName 和 path
                     if field_lower in ['servicename', 'path'] and isinstance(value, str):
-                        value = normalize_repeated_patterns(value)
+                        value = normalize_repeated_patterns(value) # 使用增强的 normalize_repeated_patterns
                     
                     # 规范化 alpn
                     if field_lower == 'alpn' and isinstance(value, str):
@@ -434,7 +471,7 @@ def parse_and_canonicalize(link_string):
                             for value in sorted(ssr_custom_params[key]):
                                 # 规范化 serviceName 或其它可能重复的参数
                                 if key_lower == 'servicename':
-                                    ssr_params[key_lower] = normalize_repeated_patterns(value)
+                                    ssr_params[key_lower] = normalize_repeated_patterns(value) # 使用增强的 normalize_repeated_patterns
                                 # 规范化 alpn
                                 elif key_lower == 'alpn':
                                     sorted_alpn_values = sorted([s.strip() for s in value.split(',') if s.strip()])
@@ -455,21 +492,12 @@ def parse_and_canonicalize(link_string):
 
         canonical_id = "###".join(canonical_id_components).lower()
         simplified_canonical_id = canonical_id
-        if ignore_userinfo and userinfo:
+        
+        if ignore_userinfo and userinfo and is_uuid(userinfo):
             # 仅当 userinfo 是 UUID 且忽略 userinfo 选项开启时才进行替换
             # 找到并替换 userinfo 部分
-            if scheme == 'ss': # SS 的 userinfo 格式不同，需要匹配 method:password
-                try:
-                    userinfo_decoded = base64.b64decode(userinfo + '=' * (-len(userinfo) % 4)).decode("utf-8", errors='replace')
-                    if ':' in userinfo_decoded:
-                        method, password = userinfo_decoded.split(':', 1)
-                        # 确保替换的是规范化后的部分
-                        simplified_canonical_id = simplified_canonical_id.replace(f"{method.lower()}:{password.lower()}###", "")
-                except Exception as e:
-                    logging.debug(f"替换 SS userinfo 失败: {e}")
-            elif is_uuid(userinfo): # 对于 VLESS, VMess 等，userinfo 是 UUID
-                simplified_canonical_id = simplified_canonical_id.replace(f"{userinfo}###", "")
-            logging.debug(f"去重时忽略 userinfo，简化后的 ID: {simplified_canonical_id}")
+            simplified_canonical_id = simplified_canonical_id.replace(f"{userinfo.lower()}###", "")
+            logging.debug(f"去重时忽略 UUID userinfo，简化后的 ID: {simplified_canonical_id}")
         
         if canonical_id:
             node_name = generate_node_name(simplified_canonical_id, scheme, host, port)
@@ -480,7 +508,7 @@ def parse_and_canonicalize(link_string):
                 'scheme': scheme,
                 'host': host, # 返回规范化后的 host
                 'port': port,
-                'userinfo': userinfo,
+                'userinfo': userinfo, # 原始 userinfo
                 'path': canonical_path,
                 'query': query_params, # 原始 query_params，用于保存
                 'vmess_params': vmess_params if scheme == 'vmess' else None,
@@ -715,8 +743,9 @@ if __name__ == "__main__":
 
     for i, (result, channel_name) in enumerate(results):
         if result:
-            # 根据 IGNORE_USERINFO 环境变量决定使用哪个 key 进行去重
-            canonical_id_for_dedup = result['simplified_canonical_id'] if os.getenv('IGNORE_USERINFO', 'false').lower() == 'true' else result['canonical_id']
+            # 根据 IGNORE_USERINFO 环境变量和 userinfo 类型决定使用哪个 key 进行去重
+            # 这里的简化逻辑已经移动到 parse_and_canonicalize 内部，所以直接使用 simplified_canonical_id
+            canonical_id_for_dedup = result['simplified_canonical_id']
             
             if canonical_id_for_dedup not in unique_configs:
                 unique_configs[canonical_id_for_dedup] = result
