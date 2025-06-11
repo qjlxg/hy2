@@ -19,7 +19,7 @@ SUPPORTED_PROTOCOLS = [
 ]
 
 # 输出目录
-OUTPUT_DIR = 'python'
+OUTPUT_DIR = 'splitter'
 
 def normalize_scheme(scheme):
     """规范化协议，例如将 hy2 转换为 hysteria2"""
