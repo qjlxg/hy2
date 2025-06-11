@@ -41,8 +41,7 @@ USER_AGENTS = [
 ]
 
 # --- 非关键查询参数（用于去重） ---
-# 移除了 'sni' 和 'host'，因为它们在去重时通常是关键信息
-# 移除了 'alpn'，因为它在 parse_and_canonicalize 中已经被规范化并参与去重
+# 这些参数的变动通常不影响节点功能，因此在去重时可以忽略
 NON_CRITICAL_QUERY_PARAMS = {'ed', 'fp', 'allowInsecure', 'obfsParam', 'protoparam', 'ps'}
 
 # --- 辅助函数 ---
@@ -103,7 +102,8 @@ def clean_and_urldecode(raw_string):
 
     cleaned = raw_string.strip()
     cleaned = re.sub(r'amp;', '', cleaned)
-    cleaned = re.sub(r'%0A|%250A|%0D|\\n', '', cleaned, flags=re.IGNORECASE)
+    # 移除 URL 编码的换行符和空字节
+    cleaned = re.sub(r'%0A|%250A|%0D|\\n|%00', '', cleaned, flags=re.IGNORECASE)
 
     decoded = cleaned
     max_decode_attempts = 5
@@ -157,12 +157,29 @@ def normalize_repeated_patterns(text):
 
     # 针对 Telegram 频道名模式进行规范化
     # 例如: Telegram:@NUFiLTER-Telegram:@NUFiLTER-Telegram:@NUFiLTER -> Telegram:@NUFiLTER
-    text = re.sub(r'(Telegram:@[a-zA-Z0-9_]+)(?:-\1)+', r'\1', text, flags=re.IGNORECASE)
+    # 使用非贪婪匹配和重复组来处理多重重复
+    text = re.sub(r'((?:Telegram:)?@[a-zA-Z0-9_]+)(?:-\1)+', r'\1', text, flags=re.IGNORECASE)
+    
     # 针对 ZEDMODEON 这样的模式进行规范化
     # 例如: ZEDMODEON-ZEDMODEON-ZEDMODEON -> ZEDMODEON
+    # 增加单词边界，避免误伤
     text = re.sub(r'([a-zA-Z0-9_]+)(?:-\1)+', r'\1', text, flags=re.IGNORECASE)
 
+    # 移除多余的连字符（如果规范化后出现 A--B 这样的情况）
+    text = re.sub(r'-+', '-', text)
+    # 移除开头和结尾的连字符
+    text = text.strip('-')
+
     return text
+
+def normalize_domain(domain):
+    """规范化域名，统一小写并移除 www. 前缀"""
+    if not isinstance(domain, str):
+        return domain
+    normalized = domain.lower()
+    if normalized.startswith('www.'):
+        return normalized[4:]
+    return normalized
 
 def normalize_path(path):
     """规范化路径，移除重复的频道名称并清理斜杠"""
@@ -175,7 +192,8 @@ def normalize_path(path):
 
 def generate_node_name(canonical_id, scheme, host, port):
     """生成标准化的节点名称，基于简化后的关键字段"""
-    simplified_key = f"{scheme}://{host}:{port}"
+    # 进一步简化用于生成节点名称的 key
+    simplified_key = f"{scheme}://{normalize_domain(host)}:{port}"
     return hashlib.md5(simplified_key.encode('utf-8')).hexdigest()[:8]
 
 def parse_and_canonicalize(link_string):
@@ -204,11 +222,16 @@ def parse_and_canonicalize(link_string):
             b64_payload += '=' * (-len(b64_payload) % 4)
             decoded_payload_str = base64.b64decode(b64_payload).decode("utf-8", errors='replace')
             vmess_json_payload = json.loads(decoded_payload_str)
+            
+            # 使用 VMess 内部的 host 和 port 来构建一个临时的 URL 用于 urlparse
             add = vmess_json_payload.get('add', '')
             port = vmess_json_payload.get('port', '')
-            # 规范化 VMess host，移除可能的 @ 符号及后续内容
-            if '@' in add and not is_uuid(add): # 只有当add不是UUID时才尝试移除@
+            
+            # 规范化 VMess host for temporary URL
+            if '@' in add and not is_uuid(add):
                 add = add.split('@')[-1]
+            add = normalize_domain(add) # 统一 host 格式
+            
             if add and port:
                 parsed_payload_for_urlparse = f"vmess://{add}:{port}"
             else:
@@ -235,7 +258,7 @@ def parse_and_canonicalize(link_string):
             ssr_decoded_parts = main_part.split(':')
             
             if len(ssr_decoded_parts) >= 6:
-                ssr_host = ssr_decoded_parts[0]
+                ssr_host = normalize_domain(ssr_decoded_parts[0]) # 规范化 SSR host
                 ssr_port = ssr_decoded_parts[1]
                 
                 # 重新构建用于 urlparse 的 SSR 链接，简化路径部分
@@ -256,12 +279,14 @@ def parse_and_canonicalize(link_string):
         return None
 
     try:
+        # 对 URL 进行初步解析
         parsed = urlparse(parsed_payload_for_urlparse)
         if not is_valid_link(parsed):
             logging.debug(f"链接基本验证失败: {link_without_fragment[:50]}...")
             return None
 
-        host = parsed.hostname.lower()
+        # 规范化 host 和 port
+        host = normalize_domain(parsed.hostname)
         port = parsed.port
         userinfo = parsed.username
 
@@ -274,10 +299,11 @@ def parse_and_canonicalize(link_string):
         if userinfo and not ignore_userinfo:
             if scheme == 'ss':
                 try:
+                    # SS userinfo 解码后是 method:password
                     userinfo_decoded = base64.b64decode(userinfo + '=' * (-len(userinfo) % 4)).decode("utf-8", errors='replace')
                     if ':' in userinfo_decoded:
                         method, password = userinfo_decoded.split(':', 1)
-                        canonical_id_components.append(f"{method}:{password}")
+                        canonical_id_components.append(f"{method.lower()}:{password.lower()}") # SS method和password小写参与去重
                     else:
                         logging.debug(f"SS userinfo 解码后格式错误: {userinfo_decoded}")
                         return None
@@ -300,6 +326,24 @@ def parse_and_canonicalize(link_string):
         canonical_query_list = []
         for key in sorted(query_params.keys()):
             key_lower = key.lower()
+            
+            # 特殊处理 host 参数（如果存在于 query 中）
+            if key_lower == 'host':
+                for value in sorted(query_params[key]):
+                    # 规范化 host 值，移除 www. 并转小写
+                    normalized_value = normalize_domain(value)
+                    if normalized_value: # 只有非空才加入
+                        canonical_query_list.append(f"{quote(key_lower)}={quote(normalized_value)}")
+                continue # 已处理，跳过后续通用逻辑
+
+            # 特殊处理 sni 参数
+            if key_lower == 'sni':
+                for value in sorted(query_params[key]):
+                    normalized_value = normalize_domain(value)
+                    if normalized_value: # 只有非空才加入
+                        canonical_query_list.append(f"{quote(key_lower)}={quote(normalized_value)}")
+                continue # 已处理，跳过后续通用逻辑
+
             if key_lower in NON_CRITICAL_QUERY_PARAMS:
                 logging.debug(f"忽略非关键查询参数 '{key_lower}' 用于去重。")
                 continue
@@ -313,7 +357,8 @@ def parse_and_canonicalize(link_string):
                 elif key_lower == 'alpn':
                     sorted_alpn_values = sorted([s.strip() for s in value.split(',') if s.strip()])
                     normalized_value = ','.join(sorted_alpn_values)
-                    canonical_query_list.append(f"{quote(key_lower)}={quote(normalized_value)}")
+                    if normalized_value: # 只有非空才加入
+                        canonical_query_list.append(f"{quote(key_lower)}={quote(normalized_value)}")
                 else:
                     canonical_query_list.append(f"{quote(key_lower)}={quote(value)}")
         if canonical_query_list:
@@ -321,7 +366,8 @@ def parse_and_canonicalize(link_string):
 
         vmess_params = None
         if scheme == 'vmess' and vmess_json_payload:
-            vmess_fields = ['id', 'aid', 'net', 'type', 'host', 'path', 'tls', 'sni', 'v', 'add', 'port', 'scy', 'fp', 'alpn', 'flow'] # 增加了 flow
+            # 增加了 'flow' 参数，这在 VMess Reality 中很重要
+            vmess_fields = ['id', 'aid', 'net', 'type', 'host', 'path', 'tls', 'sni', 'v', 'add', 'port', 'scy', 'fp', 'alpn', 'flow'] 
             vmess_params = {}
             for field in vmess_fields:
                 value = vmess_json_payload.get(field)
@@ -331,17 +377,24 @@ def parse_and_canonicalize(link_string):
                         logging.debug(f"忽略 VMess 内部非关键参数 '{field_lower}' 用于去重。")
                         continue
 
-                    # 规范化 VMess host
-                    if field_lower == 'host' and isinstance(value, str) and '@' in value and not is_uuid(value.split('@')[0]):
-                         value = value.split('@')[-1]
+                    # 规范化 VMess host (add) 和 sni
+                    if field_lower in ['add', 'host', 'sni'] and isinstance(value, str):
+                        # 如果 add 包含 @ 并且不是 UUID，则只取 @ 后面的部分
+                        if field_lower == 'add' and '@' in value and not is_uuid(value.split('@')[0]):
+                             value = value.split('@')[-1]
+                        value = normalize_domain(value) # 统一 host/sni 格式
+                    
                     # 规范化 serviceName 和 path
                     if field_lower in ['servicename', 'path'] and isinstance(value, str):
                         value = normalize_repeated_patterns(value)
+                    
                     # 规范化 alpn
                     if field_lower == 'alpn' and isinstance(value, str):
                         sorted_alpn_values = sorted([s.strip() for s in value.split(',') if s.strip()])
                         value = ','.join(sorted_alpn_values)
-
+                        if not value: # 如果规范化后为空，则跳过
+                            continue
+                    
                     vmess_params[field] = str(value).lower()
             if vmess_params:
                 vmess_canonical_parts = [f"{k}={quote(v)}" for k, v in sorted(vmess_params.items())]
@@ -385,7 +438,9 @@ def parse_and_canonicalize(link_string):
                                 # 规范化 alpn
                                 elif key_lower == 'alpn':
                                     sorted_alpn_values = sorted([s.strip() for s in value.split(',') if s.strip()])
-                                    ssr_params[key_lower] = ','.join(sorted_alpn_values)
+                                    normalized_value = ','.join(sorted_alpn_values)
+                                    if normalized_value:
+                                        ssr_params[key_lower] = normalized_value
                                 else:
                                     ssr_params[key_lower] = value
 
@@ -402,7 +457,19 @@ def parse_and_canonicalize(link_string):
         simplified_canonical_id = canonical_id
         if ignore_userinfo and userinfo:
             # 仅当 userinfo 是 UUID 且忽略 userinfo 选项开启时才进行替换
-            simplified_canonical_id = canonical_id.replace(f"{userinfo}###", "")
+            # 找到并替换 userinfo 部分
+            if scheme == 'ss': # SS 的 userinfo 格式不同，需要匹配 method:password
+                try:
+                    userinfo_decoded = base64.b64decode(userinfo + '=' * (-len(userinfo) % 4)).decode("utf-8", errors='replace')
+                    if ':' in userinfo_decoded:
+                        method, password = userinfo_decoded.split(':', 1)
+                        # 确保替换的是规范化后的部分
+                        simplified_canonical_id = simplified_canonical_id.replace(f"{method.lower()}:{password.lower()}###", "")
+                except Exception as e:
+                    logging.debug(f"替换 SS userinfo 失败: {e}")
+            elif is_uuid(userinfo): # 对于 VLESS, VMess 等，userinfo 是 UUID
+                simplified_canonical_id = simplified_canonical_id.replace(f"{userinfo}###", "")
+            logging.debug(f"去重时忽略 userinfo，简化后的 ID: {simplified_canonical_id}")
         
         if canonical_id:
             node_name = generate_node_name(simplified_canonical_id, scheme, host, port)
@@ -411,11 +478,11 @@ def parse_and_canonicalize(link_string):
                 'simplified_canonical_id': simplified_canonical_id,
                 'link': cleaned_decoded_link,
                 'scheme': scheme,
-                'host': host,
+                'host': host, # 返回规范化后的 host
                 'port': port,
                 'userinfo': userinfo,
                 'path': canonical_path,
-                'query': query_params,
+                'query': query_params, # 原始 query_params，用于保存
                 'vmess_params': vmess_params if scheme == 'vmess' else None,
                 'ssr_params': ssr_params if scheme == 'ssr' else None,
                 'remark': original_remark,
@@ -554,6 +621,7 @@ if __name__ == "__main__":
         if not cleaned_config:
             continue
 
+        # 尝试从 Base64 编码的链接中提取频道名 (vmess, ssr, ss)
         if cleaned_config.startswith(('vmess://', 'ssr://', 'ss://')):
             try:
                 b64_part = ''
@@ -563,32 +631,32 @@ if __name__ == "__main__":
                     b64_part = cleaned_config[6:]
                 elif cleaned_config.startswith('ss://'):
                     parsed_ss = urlparse(cleaned_config)
+                    # SS 链接的 username 部分是 base64 编码的 method:password，可能包含频道名
                     b64_part = parsed_ss.username if parsed_ss.username else ''
 
                 if b64_part:
+                    # 确保 Base64 字符串长度是 4 的倍数
                     b64_part += '=' * (-len(b64_part) % 4)
                     decoded_payload = base64.b64decode(b64_part).decode("utf-8", errors='replace')
 
+                    # 尝试从 VMess 'ps' 和 'add' 字段中提取频道名
                     if cleaned_config.startswith('vmess://') and decoded_payload:
                         try:
                             vmess_data = json.loads(decoded_payload)
-                            if 'ps' in vmess_data:
-                                matches = pattern_telegram_user.findall(vmess_data['ps'])
-                                for match in matches:
-                                    cleaned_name = match.lower().strip('_')
-                                    if len(cleaned_name) >= 5:
-                                        extracted_tg_names.add(cleaned_name)
-                                        logging.debug(f"从 VMess 'ps' 提取频道名: {cleaned_name}")
-                            if 'add' in vmess_data:
-                                matches = pattern_telegram_user.findall(vmess_data['add'])
-                                for match in matches:
-                                    cleaned_name = match.lower().strip('_')
-                                    if len(cleaned_name) >= 5:
-                                        extracted_tg_names.add(cleaned_name)
-                                        logging.debug(f"从 VMess 'add' 提取频道名: {cleaned_name}")
+                            for field in ['ps', 'add']: # 检查 'ps' 和 'add'
+                                if field in vmess_data and isinstance(vmess_data[field], str):
+                                    matches = pattern_telegram_user.findall(vmess_data[field])
+                                    for match in matches:
+                                        cleaned_name = match.lower().strip('_')
+                                        if len(cleaned_name) >= 5:
+                                            extracted_tg_names.add(cleaned_name)
+                                            logging.debug(f"从 VMess '{field}' 提取频道名: {cleaned_name}")
+                        except json.JSONDecodeError:
+                            logging.debug(f"VMess Base64 解码内容不是有效 JSON: {decoded_payload[:50]}...")
                         except Exception as ex:
                             logging.debug(f"处理 VMess 解码内容错误: {ex}")
 
+                    # 尝试从所有 Base64 解码内容中提取频道名
                     matches = pattern_telegram_user.findall(decoded_payload)
                     for match in matches:
                         cleaned_name = match.lower().strip('_')
@@ -598,6 +666,7 @@ if __name__ == "__main__":
             except Exception as e:
                 logging.debug(f"从 Base64 提取频道名失败: {e}")
 
+        # 尝试从原始链接字符串中提取频道名
         matches = pattern_telegram_user.findall(cleaned_config)
         for match in matches:
             cleaned_name = match.lower().strip('_')
@@ -646,7 +715,9 @@ if __name__ == "__main__":
 
     for i, (result, channel_name) in enumerate(results):
         if result:
+            # 根据 IGNORE_USERINFO 环境变量决定使用哪个 key 进行去重
             canonical_id_for_dedup = result['simplified_canonical_id'] if os.getenv('IGNORE_USERINFO', 'false').lower() == 'true' else result['canonical_id']
+            
             if canonical_id_for_dedup not in unique_configs:
                 unique_configs[canonical_id_for_dedup] = result
                 channels_that_worked.add(channel_name)
@@ -683,19 +754,22 @@ if __name__ == "__main__":
         proxy = {
             'name': config['node_name'],
             'scheme': config['scheme'],
-            'host': config['host'],
+            'host': config['host'], # 这里是规范化后的 host
             'port': config['port'],
             'userinfo': config['userinfo'] if config['userinfo'] else None,
             'path': config['path'] or None,
-            'query': {k: v[0] if len(v) == 1 else v for k, v in sorted(config['query'].items())} if config['query'] else None,
+            # 将 query 字典转换为更友好的格式，跳过空值
+            'query': {k: v[0] if len(v) == 1 else v for k, v in sorted(config['query'].items()) if v} if config['query'] else None,
             'original_link': config['link'],
             'remark': config['remark'] or None,
             'dedup_key': config['simplified_canonical_id']
         }
         if config['vmess_params']:
-            proxy['vmess_params'] = config['vmess_params']
+            # 同样，vmess_params 应该只包含非空值
+            proxy['vmess_params'] = {k: v for k, v in config['vmess_params'].items() if v}
         if config['ssr_params']:
-            proxy['ssr_params'] = config['ssr_params']
+            # 同样，ssr_params 应该只包含非空值
+            proxy['ssr_params'] = {k: v for k, v in config['ssr_params'].items() if v}
         yaml_proxies.append(proxy)
 
     yaml_data = {'proxies': yaml_proxies}
