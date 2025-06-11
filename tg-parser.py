@@ -41,7 +41,8 @@ USER_AGENTS = [
 ]
 
 # --- 非关键查询参数（用于去重） ---
-NON_CRITICAL_QUERY_PARAMS = {'ed', 'fp', 'alpn', 'allowInsecure', 'obfsParam', 'protoparam'}
+# 增加了 'sni' 和 'host' (作为查询参数时)
+NON_CRITICAL_QUERY_PARAMS = {'ed', 'fp', 'alpn', 'allowInsecure', 'obfsParam', 'protoparam', 'sni', 'host', 'ps'}
 
 # --- 辅助函数 ---
 
@@ -297,30 +298,49 @@ def parse_and_canonicalize(link_string):
         query_params = parse_qs(parsed.query, keep_blank_values=True)
         canonical_query_list = []
         for key in sorted(query_params.keys()):
-            # 特殊处理 serviceName 参数
-            if key.lower() == 'servicename':
-                for value in sorted(query_params[key]):
-                    normalized_service_name = normalize_repeated_patterns(value)
-                    canonical_query_list.append(f"{quote(key.lower())}={quote(normalized_service_name)}")
-            elif key.lower() not in NON_CRITICAL_QUERY_PARAMS:
-                for value in sorted(query_params[key]):
-                    canonical_query_list.append(f"{quote(key.lower())}={quote(value)}")
+            key_lower = key.lower()
+            if key_lower in NON_CRITICAL_QUERY_PARAMS: # 增加对 sni, host, ps 的忽略
+                logging.debug(f"忽略非关键查询参数 '{key_lower}' 用于去重。")
+                continue
+
+            for value in sorted(query_params[key]):
+                # 特殊处理 serviceName 参数
+                if key_lower == 'servicename':
+                    normalized_value = normalize_repeated_patterns(value)
+                    canonical_query_list.append(f"{quote(key_lower)}={quote(normalized_value)}")
+                # 特殊处理 alpn 参数，进行排序规范化
+                elif key_lower == 'alpn':
+                    sorted_alpn_values = sorted([s.strip() for s in value.split(',') if s.strip()])
+                    normalized_value = ','.join(sorted_alpn_values)
+                    canonical_query_list.append(f"{quote(key_lower)}={quote(normalized_value)}")
+                else:
+                    canonical_query_list.append(f"{quote(key_lower)}={quote(value)}")
         if canonical_query_list:
             canonical_id_components.append(f"query={';'.join(canonical_query_list)}")
 
         vmess_params = None
         if scheme == 'vmess' and vmess_json_payload:
-            vmess_fields = ['id', 'aid', 'net', 'type', 'host', 'path', 'tls', 'sni', 'v', 'add', 'port', 'ps', 'scy'] # 增加ps和scy字段
+            vmess_fields = ['id', 'aid', 'net', 'type', 'host', 'path', 'tls', 'sni', 'v', 'add', 'port', 'scy', 'fp', 'alpn', 'flow'] # 增加了 flow
             vmess_params = {}
             for field in vmess_fields:
                 value = vmess_json_payload.get(field)
                 if value is not None and value != '':
-                    # 规范化 VMess host 字段
-                    if field == 'host' and isinstance(value, str) and '@' in value and not is_uuid(value.split('@')[0]):
+                    field_lower = field.lower()
+                    if field_lower in NON_CRITICAL_QUERY_PARAMS: # 忽略 VMess 内部的非关键参数
+                        logging.debug(f"忽略 VMess 内部非关键参数 '{field_lower}' 用于去重。")
+                        continue
+
+                    # 规范化 VMess host
+                    if field_lower == 'host' and isinstance(value, str) and '@' in value and not is_uuid(value.split('@')[0]):
                          value = value.split('@')[-1]
                     # 规范化 serviceName 和 path
-                    if field in ['serviceName', 'path'] and isinstance(value, str):
+                    if field_lower in ['servicename', 'path'] and isinstance(value, str):
                         value = normalize_repeated_patterns(value)
+                    # 规范化 alpn
+                    if field_lower == 'alpn' and isinstance(value, str):
+                        sorted_alpn_values = sorted([s.strip() for s in value.split(',') if s.strip()])
+                        value = ','.join(sorted_alpn_values)
+
                     vmess_params[field] = str(value).lower()
             if vmess_params:
                 vmess_canonical_parts = [f"{k}={quote(v)}" for k, v in sorted(vmess_params.items())]
@@ -352,13 +372,21 @@ def parse_and_canonicalize(link_string):
                         full_query_string = link_without_fragment.split('?', 1)[1]
                         ssr_custom_params = parse_qs(full_query_string, keep_blank_values=True)
                         for key in sorted(ssr_custom_params.keys()):
-                            if key.lower() not in NON_CRITICAL_QUERY_PARAMS:
-                                for value in sorted(ssr_custom_params[key]):
-                                    # 规范化 serviceName 或其它可能重复的参数
-                                    if key.lower() == 'servicename':
-                                        ssr_params[key.lower()] = normalize_repeated_patterns(value)
-                                    else:
-                                        ssr_params[key.lower()] = value
+                            key_lower = key.lower()
+                            if key_lower in NON_CRITICAL_QUERY_PARAMS: # 忽略 SSR 内部的非关键参数
+                                logging.debug(f"忽略 SSR 内部非关键参数 '{key_lower}' 用于去重。")
+                                continue
+
+                            for value in sorted(ssr_custom_params[key]):
+                                # 规范化 serviceName 或其它可能重复的参数
+                                if key_lower == 'servicename':
+                                    ssr_params[key_lower] = normalize_repeated_patterns(value)
+                                # 规范化 alpn
+                                elif key_lower == 'alpn':
+                                    sorted_alpn_values = sorted([s.strip() for s in value.split(',') if s.strip()])
+                                    ssr_params[key_lower] = ','.join(sorted_alpn_values)
+                                else:
+                                    ssr_params[key_lower] = value
 
                     ssr_canonical_parts = [f"{k}={quote(v)}" for k, v in sorted(ssr_params.items())]
                     canonical_id_components.append(f"ssr_params={';'.join(ssr_canonical_parts)}")
