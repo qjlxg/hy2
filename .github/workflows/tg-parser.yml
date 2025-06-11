@@ -101,7 +101,7 @@ jobs:
           parser_output.log
           duplicates.txt
         overwrite: true
-        retention-days: 7
+        retention-days: 1
 
     - name: Commit and push parser updated files
       run: |
