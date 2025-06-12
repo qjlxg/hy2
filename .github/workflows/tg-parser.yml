@@ -195,10 +195,10 @@ jobs:
 
     - name: Convert files to Base64
       run: |
-        declare -a files=("configtg.txt:mixed" "python/socks:socks" "python/ss:ss" "python/trojan:trojan" \
-                          "python/vless:vless" "python/vmess:vmess" "python/tuic:tuic" \
-                          "python/hysteria2:hysteria2" "python/hysteria:hysteria" \
-                          "python/naive:naive" "python/ssr:ssr")
+        declare -a files=("configtg.txt:mixed" "splitted/socks:socks" "splitted/ss:ss" "splitted/trojan:trojan" \
+                          "splitted/vless:vless" "splitted/vmess:vmess" "splitted/tuic:tuic" \
+                          "splitted/hysteria2:hysteria2" "splitted/hysteria:hysteria" \
+                          "splitted/naive:naive" "splitted/ssr:ssr")
         for entry in "${files[@]}"; do
           IFS=':' read -r input_path output_name <<< "$entry"
           if [ -f "$input_path" ]; then
@@ -213,7 +213,7 @@ jobs:
       id: changes64
       run: |
         files=""
-        for file in split/mixed split/socks split/ss split/trojan split/vless split/vmess split/tuic split/hysteria2 split/hysteria split/naive split/ssr; do
+        for file in splitted/mixed splitted/socks splitted/ss splitted/trojan splitted/vless splitted/vmess splitted/tuic splitted/hysteria2 splitted/hysteria splitted/naive splitted/ssr; do
           if [ -f "$file" ]; then
             files="$files $file"
           fi
