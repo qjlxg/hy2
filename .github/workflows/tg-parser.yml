@@ -22,10 +22,29 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Git identity
+    - name: Create timestamped directory and archive
+      run: |
+        TIMESTAMP_DIR="$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')"
+        mkdir -p "./archives/${TIMESTAMP_DIR}"
+        mkdir -p "./archives/channels/${TIMESTAMP_DIR}"
+        # 复制文件到归档目录，如果文件不存在则输出警告
+        cp splitted/mixed "./archives/${TIMESTAMP_DIR}/" || echo "Warning: splitted/mixed not found, skipping archive."
+        cp telegramchannels.json "./archives/channels/${TIMESTAMP_DIR}/" || echo "Warning: telegramchannels.json not found, skipping archive."
+        cp configtg.txt "./archives/${TIMESTAMP_DIR}/" || echo "Warning: configtg.txt not found, skipping archive."
+        cp configtg.yaml "./archives/${TIMESTAMP_DIR}/" || echo "Warning: configtg.yaml not found, skipping archive."
+
+    - name: Grab content and update latest backup
+      run: |
+        mkdir -p archives/latest_backup
+        curl https://github.com/qjlxg/hy2/raw/main/configtg.txt -o archives/latest_backup/mixed || { echo "Error: Failed to download configtg.txt backup. Exiting."; exit 1; }
+
+    - name: Commit and push archived backups
       run: |
         git config --global user.name 'Github Action'
         git config --global user.email 'Action@github.com'
+        git add archives/
+        git commit -m "Archived backups for ${{ github.run_id }}" || echo "No changes to archive."
+        git push || echo "Failed to push archive changes."
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -39,24 +58,12 @@ jobs:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}-${{ steps.setup-python.outputs.python-version }}
         restore-keys: |
-          ${{ runner.os }}-pip-
+           ${{ runner.os }}-pip-
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-
-    - name: Create splitted directory
-      run: mkdir -p splitted
-
-    - name: Grab content and update latest backup (to splitted/)
-      run: |
-        mkdir -p archives/latest_backup
-        # 将下载的文件直接放入 splitted/ 目录，或者如果这是临时备份，可以考虑 archives/latest_backup
-        # 考虑到后续处理，这里直接下载到 splitted/configtg.txt
-        curl https://github.com/qjlxg/hy2/raw/main/configtg.txt -o splitted/configtg.txt || { echo "Error: Failed to download configtg.txt backup. Exiting."; exit 1; }
-        # 复制到latest_backup一份，作为独立备份
-        cp splitted/configtg.txt archives/latest_backup/configtg.txt || echo "Warning: Failed to copy configtg.txt to latest_backup."
 
     - name: Run TG Parser
       env:
@@ -68,34 +75,28 @@ jobs:
       run: |
         echo "Starting tg-parser.py execution and redirecting all output to parser_output.log..."
         # 将标准输出 (1) 和标准错误 (2) 都重定向并管道给 tee
-        # 确保 tg-parser.py 生成的文件（configtg.txt, configtg.yaml, telegramchannels.json, invalidtelegramchannels.json）在根目录或指定目录
-        # 假设 tg-parser.py 默认在当前目录生成这些文件，然后我们再移动
         python3 tg-parser.py 2>&1 | tee parser_output.log
         echo "Finished tg-parser.py execution."
+        # 打印 parser_output.log 的内容到 GitHub Actions 实时日志，方便调试
         echo "--- Content of parser_output.log ---"
         cat parser_output.log
         echo "------------------------------------"
-        # 将 parser 生成的关键文件移动到 splitted/ 目录
-        mv configtg.txt splitted/configtg.txt || echo "Warning: configtg.txt not found, skipping move."
-        mv configtg.yaml splitted/configtg.yaml || echo "Warning: configtg.yaml not found, skipping move."
-        mv telegramchannels.json splitted/telegramchannels.json || echo "Warning: telegramchannels.json not found, skipping move."
-        mv invalidtelegramchannels.json splitted/invalidtelegramchannels.json || echo "Warning: invalidtelegramchannels.json not found, skipping move."
 
-    - name: Verify deduplication in splitted/configtg.txt
+    - name: Verify deduplication in configtg.txt
       run: |
-        if [ -f splitted/configtg.txt ]; then
-          total=$(wc -l < splitted/configtg.txt)
-          unique=$(sort splitted/configtg.txt | uniq | wc -l)
+        if [ -f configtg.txt ]; then
+          total=$(wc -l < configtg.txt)
+          unique=$(sort configtg.txt | uniq | wc -l)
           duplicates=$((total - unique))
           echo "Total links: $total, Unique links: $unique, Duplicates: $duplicates, Duplicate rate: $(echo "scale=2; $duplicates/$total*100" | bc)%"
           if [ "$duplicates" -gt 0 ]; then
-            echo "Warning: Found $duplicates duplicate links in splitted/configtg.txt"
-            sort splitted/configtg.txt | uniq -d > duplicates.txt
+            echo "Warning: Found $duplicates duplicate links in configtg.txt"
+            sort configtg.txt | uniq -d > duplicates.txt
           else
             touch duplicates.txt # 确保文件存在，避免上传失败
           fi
         else
-          echo "Error: splitted/configtg.txt not found. Exiting."
+          echo "Error: configtg.txt not found. Exiting."
           exit 1
         fi
 
@@ -110,46 +111,34 @@ jobs:
         overwrite: true
         retention-days: 1
 
-    - name: Commit and push parser updated files (from splitted/)
+    - name: Commit and push parser updated files
       run: |
-        git add splitted/configtg.txt splitted/configtg.yaml splitted/telegramchannels.json splitted/invalidtelegramchannels.json
+        git config --local user.name "GitHub Action"
+        git config --local user.email "action@github.com"
+        git add configtg.txt configtg.yaml telegramchannels.json invalidtelegramchannels.json
         git diff --staged --quiet || git commit -m "Update TG configs and channel lists for ${{ github.run_id }}" || echo "No changes from parser."
         git push || echo "Failed to push parser changes."
 
     - name: Split UTF-8 and update subscriptions
       run: |
-        if [ -f splitted/splitter.py ]; then # 假设 splitter.py 也在 splitted/ 目录
-          python splitted/splitter.py
-        elif [ -f splitter.py ]; then # 或者在根目录
-          python splitter.py
-          mv vmess splitted/vmess || true # 移动生成的文件到 splitted/
-          mv vless splitted/vless || true
-          mv trojan splitted/trojan || true
-          mv ss splitted/ss || true
-          mv socks splitted/socks || true
-          mv hysteria2 splitted/hysteria2 || true
-          mv tuic splitted/tuic || true
-          mv hysteria splitted/hysteria || true
-          mv naive splitted/naive || true
-          mv ssr splitted/ssr || true
-          mv unknown splitted/unknown || true
+        if [ -f python/splitter.py ]; then
+          python python/splitter.py
         else
-          echo "Warning: splitter.py not found, skipping split."
+          echo "Warning: python/splitter.py not found, skipping split."
         fi
 
-    - name: Verify deduplication in split files (from splitted/)
+    - name: Verify deduplication in split files
       run: |
-        touch splitted/split_duplicates.txt
-        # 遍历 splitted/ 目录下的所有文件，排除 splitter.py
-        for file in splitted/*; do
-          if [ -f "$file" ] && [ "$(basename "$file")" != "splitter.py" ]; then
+        touch split_duplicates.txt
+        for file in python/*; do
+          if [ -f "$file" ] && [ "$(basename "$file")" != "splitter.py" ]; then # 排除 splitter.py
             total=$(wc -l < "$file")
             unique=$(sort "$file" | uniq | wc -l)
             duplicates=$((total - unique))
             echo "$file: Total links: $total, Unique links: $unique, Duplicates: $duplicates, Duplicate rate: $(echo "scale=2; $duplicates/$total*100" | bc)%"
             if [ "$duplicates" -gt 0 ]; then
               echo "Warning: Found $duplicates duplicate links in $file"
-              sort "$file" | uniq -d >> splitted/split_duplicates.txt
+              sort "$file" | uniq -d >> split_duplicates.txt
             fi
           fi
         done
@@ -159,15 +148,16 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: split-duplicates
-        path: splitted/split_duplicates.txt
+        path: split_duplicates.txt
         overwrite: true
         retention-days: 7
 
-    - name: Check for split changes (in splitted/)
+    - name: Check for split changes
       id: changes_split
       run: |
+        # 只检查存在的文件
         files=""
-        for file in splitted/vmess splitted/vless splitted/trojan splitted/ss splitted/socks splitted/hysteria2 splitted/tuic splitted/hysteria splitted/naive splitted/ssr splitted/unknown; do
+        for file in python/vmess python/vless python/trojan python/ss python/socks python/hysteria2 python/tuic python/hysteria python/naive python/ssr python/unknown; do
           if [ -f "$file" ]; then
             files="$files $file"
           fi
@@ -180,11 +170,14 @@ jobs:
           echo "changed=true" >> "$GITHUB_OUTPUT"
         fi
 
-    - name: Commit and push split files (from splitted/)
+    - name: Commit and push split files
       if: steps.changes_split.outputs.changed == 'true'
       run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        # 只添加存在的文件
         files=""
-        for file in splitted/vmess splitted/vless splitted/trojan splitted/ss splitted/socks splitted/hysteria2 splitted/tuic splitted/hysteria splitted/naive splitted/ssr splitted/unknown; do
+        for file in python/vmess python/vless python/trojan python/ss python/socks python/hysteria2 python/tuic python/hysteria python/naive python/ssr python/unknown; do
           if [ -f "$file" ]; then
             files="$files $file"
           fi
@@ -197,28 +190,30 @@ jobs:
           echo "No split files to commit."
         fi
 
-    - name: Convert files to Base64 (output to splitted/base64/)
+    - name: Create split directory
+      run: mkdir -p split
+
+    - name: Convert files to Base64
       run: |
-        mkdir -p splitted/base64 # 创建 Base64 专用子目录
-        declare -a files=("splitted/configtg.txt:mixed" "splitted/socks:socks" "splitted/ss:ss" "splitted/trojan:trojan" \
-                          "splitted/vless:vless" "splitted/vmess:vmess" "splitted/tuic:tuic" \
-                          "splitted/hysteria2:hysteria2" "splitted/hysteria:hysteria" \
-                          "splitted/naive:naive" "splitted/ssr:ssr")
+        declare -a files=("configtg.txt:mixed" "python/socks:socks" "python/ss:ss" "python/trojan:trojan" \
+                          "python/vless:vless" "python/vmess:vmess" "python/tuic:tuic" \
+                          "python/hysteria2:hysteria2" "python/hysteria:hysteria" \
+                          "python/naive:naive" "python/ssr:ssr")
         for entry in "${files[@]}"; do
           IFS=':' read -r input_path output_name <<< "$entry"
           if [ -f "$input_path" ]; then
-            cat "$input_path" | base64 | tr -d '\n' > "splitted/base64/$output_name" # 输出到 splitted/base64/
-            echo "Converted $input_path to splitted/base64/$output_name"
+            cat "$input_path" | base64 | tr -d '\n' > "splitted/$output_name"
+            echo "Converted $input_path to splitted/$output_name"
           else
             echo "Warning: $input_path not found, skipping Base64 conversion."
           fi
         done
 
-    - name: Check for base64 changes (in splitted/base64/)
+    - name: Check for base64 changes
       id: changes64
       run: |
         files=""
-        for file in splitted/base64/mixed splitted/base64/socks splitted/base64/ss splitted/base64/trojan splitted/base64/vless splitted/base64/vmess splitted/base64/tuic splitted/base64/hysteria2 splitted/base64/hysteria splitted/base64/naive splitted/base64/ssr; do
+        for file in splitted/mixed splitted/socks splitted/ss splitted/trojan splitted/vless splitted/vmess splitted/tuic splitted/hysteria2 splitted/hysteria splitted/naive splitted/ssr; do
           if [ -f "$file" ]; then
             files="$files $file"
           fi
@@ -231,27 +226,11 @@ jobs:
           echo "changed=true" >> "$GITHUB_OUTPUT"
         fi
 
-    - name: Commit and push base64 files (from splitted/base64/)
+    - name: Commit and push base64 files
       if: steps.changes64.outputs.changed == 'true'
       run: |
-        git add splitted/base64/
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add splitted/
         git commit --allow-empty -m "Update Base64 output files for ${{ github.run_id }}"
         git push || echo "Failed to push Base64 changes."
-
-    - name: Create timestamped directory and archive (after all processing)
-      run: |
-        TIMESTAMP_DIR="$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')"
-        mkdir -p "./archives/${TIMESTAMP_DIR}"
-        mkdir -p "./archives/channels/${TIMESTAMP_DIR}"
-        # 复制处理后的文件到归档目录
-        cp splitted/configtg.txt "./archives/${TIMESTAMP_DIR}/" || echo "Warning: splitted/configtg.txt not found, skipping archive."
-        cp splitted/configtg.yaml "./archives/${TIMESTAMP_DIR}/" || echo "Warning: splitted/configtg.yaml not found, skipping archive."
-        cp splitted/telegramchannels.json "./archives/channels/${TIMESTAMP_DIR}/" || echo "Warning: splitted/telegramchannels.json not found, skipping archive."
-        # 如果需要归档 Base64 后的 mixed 文件
-        cp splitted/base64/mixed "./archives/${TIMESTAMP_DIR}/mixed_base64" || echo "Warning: splitted/base64/mixed not found, skipping archive."
-
-    - name: Commit and push archived backups
-      run: |
-        git add archives/
-        git commit -m "Archived backups for ${{ github.run_id }}" || echo "No changes to archive."
-        git push || echo "Failed to push archive changes."
