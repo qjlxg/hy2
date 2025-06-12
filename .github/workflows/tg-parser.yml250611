@@ -28,7 +28,7 @@ jobs:
         mkdir -p "./archives/${TIMESTAMP_DIR}"
         mkdir -p "./archives/channels/${TIMESTAMP_DIR}"
         # 复制文件到归档目录，如果文件不存在则输出警告
-        cp split/mixed "./archives/${TIMESTAMP_DIR}/" || echo "Warning: split/mixed not found, skipping archive."
+        cp splitted/mixed "./archives/${TIMESTAMP_DIR}/" || echo "Warning: splitted/mixed not found, skipping archive."
         cp telegramchannels.json "./archives/channels/${TIMESTAMP_DIR}/" || echo "Warning: telegramchannels.json not found, skipping archive."
         cp configtg.txt "./archives/${TIMESTAMP_DIR}/" || echo "Warning: configtg.txt not found, skipping archive."
         cp configtg.yaml "./archives/${TIMESTAMP_DIR}/" || echo "Warning: configtg.yaml not found, skipping archive."
@@ -202,8 +202,8 @@ jobs:
         for entry in "${files[@]}"; do
           IFS=':' read -r input_path output_name <<< "$entry"
           if [ -f "$input_path" ]; then
-            cat "$input_path" | base64 | tr -d '\n' > "split/$output_name"
-            echo "Converted $input_path to split/$output_name"
+            cat "$input_path" | base64 | tr -d '\n' > "splitted/$output_name"
+            echo "Converted $input_path to splitted/$output_name"
           else
             echo "Warning: $input_path not found, skipping Base64 conversion."
           fi
@@ -213,7 +213,7 @@ jobs:
       id: changes64
       run: |
         files=""
-        for file in split/mixed split/socks split/ss split/trojan split/vless split/vmess split/tuic split/hysteria2 split/hysteria split/naive split/ssr; do
+        for file in splitted/mixed splitted/socks splitted/ss splitted/trojan splitted/vless splitted/vmess splitted/tuic splitted/hysteria2 splitted/hysteria splitted/naive splitted/ssr; do
           if [ -f "$file" ]; then
             files="$files $file"
           fi
@@ -231,6 +231,6 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add split/
+        git add splitted/
         git commit --allow-empty -m "Update Base64 output files for ${{ github.run_id }}"
         git push || echo "Failed to push Base64 changes."
