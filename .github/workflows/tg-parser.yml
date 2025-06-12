@@ -5,155 +5,73 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
   workflow_dispatch:
   schedule:
-    - cron: "0 4,12,18 * * *"
+    - cron: "0 4 * * *" # 减少到每天一次
+
+env:
+  THRD_PARS: '128'
+  PARS_DP: '1'
+  USE_INV_TC: 'n'
+
 jobs:
   run_python_and_push:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-    
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "GitHub Action"
+        git config --global user.email "action@github.com"
+
+    - name: Grab content and update backup
+      run: |
+        mkdir -p archives/latest_backup
+        curl https://github.com/qjlxg/hy2/raw/main/configtg.txt -o archives/latest_backup/mixed
+        [ -s archives/latest_backup/mixed ] || { echo "Error: Downloaded file is empty or invalid"; exit 1; }
 
     - name: Create timestamped directory and archive
       run: |
         TIMESTAMP_DIR="$(date +'%Y%m')/$(date +'%Y-%m-%d_%H-%M-%S')"
         mkdir -p "./archives/${TIMESTAMP_DIR}"
         mkdir -p "./archives/channels/${TIMESTAMP_DIR}"
-        # 复制文件到归档目录，如果文件不存在则输出警告
-        cp splitted/mixed "./archives/${TIMESTAMP_DIR}/" || echo "Warning: splitted/mixed not found, skipping archive."
-        cp telegramchannels.json "./archives/channels/${TIMESTAMP_DIR}/" || echo "Warning: telegramchannels.json not found, skipping archive."
-        cp configtg.txt "./archives/${TIMESTAMP_DIR}/" || echo "Warning: configtg.txt not found, skipping archive."
-        cp configtg.yaml "./archives/${TIMESTAMP_DIR}/" || echo "Warning: configtg.yaml not found, skipping archive."
+        cp -f splitted/mixed "./archives/${TIMESTAMP_DIR}/" || { echo "Error: splitted/mixed not found"; exit 1; }
+        cp -f telegramchannels.json "./archives/channels/${TIMESTAMP_DIR}/" || { echo "Error: telegramchannels.json not found"; exit 1; }
+        cp -f configtg.txt "./archives/${TIMESTAMP_DIR}/" || { echo "Error: configtg.txt not found"; exit 1; }
+        cp -f configtg.yaml "./archives/${TIMESTAMP_DIR}/" || { echo "Error: configtg.yaml not found"; exit 1; }
 
-    - name: Grab content and update backup
-      run: |
-        curl https://github.com/qjlxg/hy2/raw/main/configtg.txt -o archives/latest_backup/mixed || { echo "Error: Failed to download configtg.txt backup. Exiting."; exit 1; }
-
-    - name: Commit and push if there are changes
-      run: |
-        git config --global user.name 'Github Action'
-        git config --global user.email 'Action@github.com'
-        git add .
-        git commit -m "Archived backups"
-        git push
-    
-    
-    - name: Set up Parser
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x'
+        python-version: '3.10'
 
-
-    - name: Install Parser dependencies
+    - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        
+        [ -f requirements.txt ] && pip install -r requirements.txt || echo "Warning: requirements.txt not found"
 
     - name: Run Parser
-      env:
-          THRD_PARS: '128'
-          PARS_DP: '1'
-          USE_INV_TC: 'n'
-      run: |
-        python tg-parser.py
-          
-    - name: Local Authentication
-      run: |
-        git config --local user.name "GitHub Action"
-        git config --local user.email "action@github.com"
+      run: python tg-parser.py
 
-    - name: Commit & push Parser
-      run: |
-        git add .
-        git commit -m "Update files"
-        git pull
-        git push
-
-    - name: Set up Splitter
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-
-  
     - name: Split UTF-8 and update subscriptions
-      run: |
-        python python/splitter.py
+      run: python python/splitter.py
 
-    - name: Check for split changes
+    - name: Convert files to Base64
+      run: |
+        for file in mixed socks ss trojan vless vmess tuic hysteria2 hy2; do
+          content=$(cat "python/$file" | base64 | tr -d '\n')
+          echo "$content" > "splitted/$file"
+        done
+
+    - name: Check for changes
       id: changes
       run: |
-        git diff --quiet && echo 'No changes' || echo '::set-output name=changed::true'
+        git add .
+        git diff --cached --quiet && echo 'No changes' || echo '::set-output name=changed::true'
 
-    - name: Commit and push splitted
+    - name: Commit and push changes
       if: steps.changes.outputs.changed == 'true'
       run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add python/vmess python/vless python/trojan python/ss python/socks python/hysteria2 python/hy2 python/tuic
-          git commit -am "Update v2ray subscriptions"
-          git push
-
-    - name: Convert mixed to base64
-      run: |
-          content=$(cat configtg.txt | base64| tr -d '\n')
-            echo "$content" > splitted/mixed
-
-    - name: Convert socks to base64
-      run: |
-          content=$(cat python/socks | base64| tr -d '\n')
-            echo "$content" > splitted/socks
-
-    - name: Convert ss to base64
-      run: |
-          content=$(cat python/ss | base64| tr -d '\n')
-            echo "$content" > splitted/ss
-
-    - name: Convert trojan to base64
-      run: |
-          content=$(cat python/trojan | base64| tr -d '\n')
-            echo "$content" > splitted/trojan
-
-    - name: Convert vless to base64
-      run: |
-          content=$(cat python/vless | base64| tr -d '\n')
-            echo "$content" > splitted/vless
-
-    - name: Convert vmess to base64
-      run: |
-          content=$(cat python/vmess | base64| tr -d '\n')
-            echo "$content" > splitted/vmess
-
-    - name: Convert tuic to base64
-      run: |
-          content=$(cat python/tuic | base64| tr -d '\n')
-            echo "$content" > splitted/tuic
-
-    - name: Convert hysteria2 to base64
-      run: |
-          content=$(cat python/hysteria2 | base64| tr -d '\n')
-            echo "$content" > splitted/hysteria2
-
-    - name: Convert hy2 to base64
-      run: |
-          content=$(cat python/hy2 | base64| tr -d '\n')
-            echo "$content" > splitted/hy2
-       
-    - name: Check for Base64 Changes
-      id: changes64
-      run: |
-            git diff --quiet && echo 'No changes' || echo '::set-output name=changed::true'   
-      
-    - name: Commit and push Base64
-      if: steps.changes.outputs.changed == 'true'   
-      run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add splitted/mixed
-          git add splitted/*
-          git commit --allow-empty -m "Update output files"
-          git push
+        git commit -m "Update subscriptions and Base64 files"
+        git push
