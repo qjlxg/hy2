@@ -29,8 +29,15 @@ jobs:
     - name: Grab content and update backup
       run: |
         mkdir -p archives/latest_backup
-        curl https://github.com/qjlxg/hy2/raw/main/configtg.txt -o archives/latest_backup/mixed
-        [ -s archives/latest_backup/mixed ] || { echo "Error: Downloaded file is empty or invalid"; exit 1; }
+        if [ ! -f configtg.txt ]; then
+          echo "Error: configtg.txt not found in repository root"
+          exit 1
+        fi
+        if [ ! -s configtg.txt ]; then
+          echo "Error: configtg.txt is empty"
+          exit 1
+        fi
+        cp configtg.txt archives/latest_backup/mixed
 
     - name: Create timestamped directory and archive
       run: |
