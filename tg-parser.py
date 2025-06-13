@@ -730,7 +730,7 @@ if __name__ == "__main__":
         thread.join()
 
     end_time_parsing = datetime.now()
-    logging.info(f'\n爬取完成 - 耗时 {str(end_time_parsing - start_time).split('.')[0]}')
+    logging.info(f'\n爬取完成 - 耗时 {(end_time_parsing - start_time).total_seconds():.2f} 秒')
     logging.info(f'共提取到 {len(all_potential_links_data)} 条潜在链接。')
 
     logging.info(f'\n开始去重和规范化链接...')
