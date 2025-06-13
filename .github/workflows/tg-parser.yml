@@ -7,7 +7,7 @@ on:
     branches: [ main ]
   workflow_dispatch:
   schedule:
-    - cron: "0 4 * * *" # 减少到每天一次
+    - cron: '0 */3 * * *'
 
 env:
   THRD_PARS: '128'
